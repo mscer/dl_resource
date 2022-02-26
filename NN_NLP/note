@@ -1,10 +1,17 @@
 7大任务
 	plm/分类/ner/nlg/mt/qa/summary
 
+survery
+	The NLP Cookbook: Modern Recipes for  Transformer based Deep Learning Architectures
+		方法：survey of transformers for nlp 
+
 
 CNN
 	Convolutional Neural Networks for Sentence Classification
 		方法：textcnn
+transformers
+	Attention Is All You Need
+		方法：transformers
 
 多任务&prompt
   	Multitask Prompted Training Enables Zero-Shot Task Generalization
