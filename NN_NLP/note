@@ -1,0 +1,29 @@
+7大任务
+	plm/分类/ner/nlg/mt/qa/summary
+
+
+CNN
+	Convolutional Neural Networks for Sentence Classification
+		方法：textcnn
+
+多任务&prompt
+  	Multitask Prompted Training Enables Zero-Shot Task Generalization
+        		方法：多任务prompt训练plm。
+	How Can We Know What Language Models Know_
+		大量实验证明：promopt相当于多少ft的样本
+
+DPR
+	Dense Passage Retrieval for Open-Domain Question Answering
+		方法：对比学习做passage召回
+	Multi-task Retrieval for Knowledge-Intensive Tasks
+		方法：多任务版本DPR
+	REALM: Retrieval-Augmented Language Model Pre-Training
+		方法：end2end 训练：dpr+bert
+	
+	Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
+		方法：end2end 训练：dpr+bart
+
+
+	
+	
+	
