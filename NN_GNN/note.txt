@@ -1,0 +1,19 @@
+静态图+时间建模
+
+A3T-GCN: Attention Temporal Graph Convolutional Network for Traffic Forecasting
+	任务：时空场景下的交通预测
+	方法：gru学习短时时间依赖；gcn学习网络拓扑依赖；引入注意力机制来学习不同时间几点的重要性；t-gcn上增加attention
+		t-gcn：先走gcn，然后走gru；
+		本文：t-gcn的输出引入attention，计算全局context vector
+	动机：已有的是gru+gcn的结合。问题是不同时间的影响并不一定都是越近影响越大，核心点就是引入attention来处理时间信号的作用问题
+
+T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction
+	任务：时空场景下的交通预测
+
+动态图+时间建模
+GC-LSTM: Graph Convolution Embedded LSTM for Dynamic Network Link Prediction
+	任务：处理不同网络结构随时间进化的时空网络结构， 网络的随时间进化。 预测下一时刻的网络结构，输入是邻接矩阵
+	动机：大多数时空网络都是静态图，而实际上世界是动态变化的
+	方法：
+		图的临近矩阵作为输入，lstm的不同门，分别引入gcn。 输入是邻接矩阵，通过decode预测下一时刻的临近矩阵
+
