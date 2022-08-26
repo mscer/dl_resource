@@ -1,0 +1,10 @@
+ctr
+	Deep Learning for Click-Through Rate Estimation
+		动机：ctr综述，讲述从浅层模型到深层模型的进展。着重特征交叉/用户行为序列/automl等
+		ctr应用场景：推荐/广告/
+		模型：lr / poly /fm / wdl/ deepfm/ dien/ autoFIS/ amer/ubr/sim/rim； 从特征交叉，到用户行为序列
+		NN模型的基本范式：
+			embed&MLP； 问题：single dnn 学习高阶交叉特征很困难-》特征工程/special layer（prodict/cnn/attn）
+			单塔/双塔：单塔模型的低阶交叉信号容易消失；  双塔明确有人工dot-feat和 nn的高阶特征，效果更好
+			用户行为历史：item id和 特征构成行为 序列； 三种方法：attn/memory-based/retrieval-based
+			automl：embed维度的自动设计/自动特征选择，特征组合/自动网络设计
