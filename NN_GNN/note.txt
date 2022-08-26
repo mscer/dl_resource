@@ -17,3 +17,9 @@ GC-LSTM: Graph Convolution Embedded LSTM for Dynamic Network Link Prediction
 	方法：
 		图的临近矩阵作为输入，lstm的不同门，分别引入gcn。 输入是邻接矩阵，通过decode预测下一时刻的临近矩阵
 
+Dynamic Graph Convolutional Networks
+	动机：目前大多数都是静态graph，但是实际上真实世界多为动态图（节点和边发生改变-》时序信号）
+	方法：lstm和gcn的结合	
+	
+
+
