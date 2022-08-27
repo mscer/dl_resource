@@ -8,3 +8,13 @@ ctr
 			单塔/双塔：单塔模型的低阶交叉信号容易消失；  双塔明确有人工dot-feat和 nn的高阶特征，效果更好
 			用户行为历史：item id和 特征构成行为 序列； 三种方法：attn/memory-based/retrieval-based
 			automl：embed维度的自动设计/自动特征选择，特征组合/自动网络设计
+
+
+	A Peep into the Future: Adversarial Future Encoding in Recommendation
+		动机：推荐系统除了要充分利用历史设计，future information信息也很重要，future 信息和历史信息形成互补。但是future信息无法直接获得，本博文提出对抗future encoding框架来提取future信息
+		方法：参考GAN，采用生成器和判别器的方式，使得生成器产生future information;  
+			判别器：输入真实历史信息和future信息，判断是否合法
+			生成器：根据历史行为，生成future information: 对item的点击/非点击等行为等所有依赖用户反馈的信息
+			训练部分：参考irgan，使用强化学习进行训练
+			在线应用：1 重排阶段的强化学习； 2 精排的point-wise
+	
