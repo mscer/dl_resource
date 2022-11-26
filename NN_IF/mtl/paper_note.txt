@@ -1,0 +1,11 @@
+多任务:  
+	Progressive Layered Extraction (PLE): A Novel Multi-Task Learning (MTL) Model for Personalized Recommendations： 任务之间的强弱关联导致跷跷板效应如何处理
+		动机：解决多任务的跷跷板效应
+		背景：工业中尝试用MTL做推荐，通过不同任务之间的共享，提升学习效率。但是任务之间的弱关联、或者复杂关联导致多任务之间存在跷跷板效应； MMOE业界常用，但是这个模型也存在跷跷板效应
+		模型：设计shared的expert和 task特定的expert，减轻expert之间的有害影响。
+		创新点：分离task特定 expert和 shared expert; +多层结构； 明确share expert 和task expert； task= task expert+shared expert； 同时结合gate机制进行输入的re-weighting(动态weighting)
+	
+	ESMM   层次样本bias问题的处理
+		背景：cvr的两个问题：ssb。样本偏执：“未点击!=未成交”； 数据稀疏问题：
+		方式：通过ctr和 pctvr的方式建立loss， cvr作为模型的副产物，没有对应的target和loss。
+	

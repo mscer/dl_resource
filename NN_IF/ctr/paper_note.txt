@@ -1,0 +1,20 @@
+
+
+
+CTR预估
+	Open Benchmarking for Click-Through Rate Prediction
+		特征处理：category /numeric/multi-value. embed /离散化/分桶+embed/归一化/缺失填充
+		特征交叉：fm/内积/外积/attention/mlp
+		loss 函数：交叉熵
+		典型模型：
+			shallow:lr/fm/ffm/
+			deep：dnn/youtube dnn/wide&deep/deepfm/DCN/NFM/AFM/xDeepFM/DIN/DIEN/DSIN/ESMM/MMoe/PLE
+		key poin:data/model/hyper-parameter
+		评估：auc/gauc/logloss
+		特征交叉/用户行为序列/多任务/多模态
+
+
+	Enhancing CTR Prediction with Context-Aware Feature Representation Learning 
+		任务背景：特征re-weighting；
+		动机：autoint等会进行softmax，导致一些在特定场景的作用需要比较强的特征，被弱化掉。—》根据context提升特征重要性（比如引入gate机制？）
+		特性： 学习了个d维的信号，所有特征共享：所有特征都需要乘以这个信号？？？ 真的有用吗

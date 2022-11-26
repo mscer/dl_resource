@@ -1,0 +1,3 @@
+AutoDis
+An Embedding Learning Framework for Numerical Features in CTR Prediction
+	跟memroy_net类似的一种结构，区别是这个做成了连续特征的自动离散

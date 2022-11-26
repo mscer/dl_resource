@@ -1,0 +1,6 @@
+match
+	Multi-Interest Network with Dynamic Routing for Recommendation at Tmall
+		场景：RS召回
+		动机：现有的nn技术用单一向量表示用户不足以表示用户兴趣的动态变化；MIND通过多向量来表示用户，表达用户兴趣的多样性。利用胶囊路由机制，设计多兴趣提取器。 胶囊网络的特性（动态路由，输入是多个向量，相当于输入是多向量的形式，有点像多个独立单元的特征re-weighting，输入是多个并行的组，而不是在iid分布假设）？
+		方法：多兴趣提取层 采用动态路由自适应聚合用户行为；核心式学习到根据用户交互的item和用户画像的信息 学习到用户的表示，以及item的表示。 samples softmax 对样本空间进行采样。 藉由胶囊网络的动态路由机制，来产生用户的多兴趣描述。参考算法描述理解动态路由。
+		实验：offline /online。 online基线：item-based cf（cf）； youtube dnn(content-based)
