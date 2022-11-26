@@ -1,0 +1,26 @@
+综述
+
+	A Survey of Natural Language Generation
+		NLG综述文章
+		核心工作：NLG的模型，任务和数据集，未来方向；
+			NLP: 词法/句法/语义/篇章/
+			NLG：包含data2text and text2text； text2text: 文本精炼/文本扩展/文本改写和推理
+		基础method：
+			rnn seq2seq/transformer/attention/copy and point/ gan/memory network/gnn/pre-trained
+		文本精炼：
+			将信息从上文本中提取到短文本中/提出问题等；包含提取式/生成式
+			数据集
+			method
+		文本扩展：
+			短文本扩展/主题生成
+		文本改写和推理
+		图像描述 视频描述/视觉故事线
+		评估方式：
+			统计机器生成的文本与人工文本的覆盖率/距离等：
+				bleu/rouge/meteor/self-bleu
+				bleu：基于n-gram的权重，统计贡献频率；
+				rouge：测量两个句子的相似性；
+				meteor：bleu的改进型
+				
+			
+			
