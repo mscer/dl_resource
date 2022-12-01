@@ -1,0 +1,80 @@
+ctr
+	Deep Learning for Click-Through Rate Estimation
+		动机：ctr综述，讲述从浅层模型到深层模型的进展。着重特征交叉/用户行为序列/automl等
+		ctr应用场景：推荐/广告/
+		模型：lr / poly /fm / wdl/ deepfm/ dien/ autoFIS/ amer/ubr/sim/rim； 从特征交叉，到用户行为序列
+		NN模型的基本范式：
+			embed&MLP； 问题：single dnn 学习高阶交叉特征很困难-》特征工程/special layer（prodict/cnn/attn）
+			单塔/双塔：单塔模型的低阶交叉信号容易消失；  双塔明确有人工dot-feat和 nn的高阶特征，效果更好
+			用户行为历史：item id和 特征构成行为 序列； 三种方法：attn/memory-based/retrieval-based
+			automl：embed维度的自动设计/自动特征选择，特征组合/自动网络设计
+
+
+	A Peep into the Future: Adversarial Future Encoding in Recommendation
+		动机：推荐系统除了要充分利用历史设计，future information信息也很重要，future 信息和历史信息形成互补。但是future信息无法直接获得，本博文提出对抗future encoding框架来提取future信息
+		方法：参考GAN，采用生成器和判别器的方式，使得生成器产生future information;  
+			判别器：输入真实历史信息和future信息，判断是否合法
+			生成器：根据历史行为，生成future information: 对item的点击/非点击等行为等所有依赖用户反馈的信息
+			训练部分：参考irgan，使用强化学习进行训练
+			在线应用：1 重排阶段的强化学习； 2 精排的point-wise
+
+	
+	Sampling Is All You Need on Modeling Long-Term User Behaviors for CTR Prediction
+		动机：对用户长期行为序列的利用上，由于在线rt的约束，会经常用retrieval-based的方法，但是这种方法是次优的；
+		
+
+
+re-rank
+	Neural Re-ranking in Multi-stage Recommender Systems: A Review
+		场景：推荐系统rerank综述。rerank:item对用户的西印度，不仅取决于自身，还取决于list-wise的其他item；rerank的优化目标：精度/多样性/公平性/
+		rerank历程：最早只有MMR。
+		rerank简介：输入是所有item，需要builld一个多元score。相比于rank只需要考虑一元score；nn rerank的两种架构：1 listwise context建模，通过历史行为数据；2 生成+评估的方式。
+	
+		训练数据来源：
+			1 直接根据历史行为数据，进行list-wise建模；rnn-based（DLCM）； attention-based（PRM）
+			2 假设item的相关性与排列顺序有关，即使相关的item，排列不同，其相关性也不同。； 生成+判别
+		loss_func：
+			1 point-wise:cross-entroy
+			2 pair-wise: BPR loss/hinge loss
+			3 Listwisw: kl-loss/
+		多指标优化：
+			多样性：非学习型：MMR; 又是一大堆模型；
+			公平性：暂时应该不需要考虑
+		模型比较：
+			PRM>setrank>DLCM
+		下一步方向：
+			稀疏问题；
+			多目标优化问题：精度/多样性/公平性；
+			
+	[DLCM] Learning a Deep Listwise Context Model for Ranking
+		场景：nn rerank问题。从top-k的item中学习特征，来强化上一步的rank结果。
+		动机： local ranking context（伪相关性反馈的一种）：,a well-studied framework is to represent each query with the top retrieved documents。 这篇论文想直接吧local ranking context建模到模型中。 根据topn的结果，来提取出query-specific的特征，对结果进行rerank：尝试根据topn的召回结果，分析出类似权威性/时效性/等跟比较依赖query的“需求度”指标。
+		方法：精排结果的topn,给rnn， rnn的隐含state和输出用来re-rank精排topn结果； 同时加入基于attenion的list-wise loss函数。 基于local ranking context假设来做的排序。 基于attenion的listloss：分别计算label和模型输出的结果的attention系数（好像就是一个softmax???）；举的例子倒是挺有说服力。  does not directly predict the relevance labels of documents but focuses on the relative importance of each result in the ranked list
+	
+	
+	[PRM]Personalized Re-ranking for Recommendation
+		场景：上下文感知的rerank排序。推荐业务
+		动机：典型的rank只考虑point-wide的<user,item>特征，而没有考虑list中的其他item；同时引入个性化部分，来表示用户的偏好和意图，结合list共同作用来排序。
+		问题：re-rank需要考虑的：list中term之间的互信息/用户与list的相互作用（相同的list对不同人有不同的反应，也就是说互信息也要考虑个性化）。
+		方法：个性化部分：用户对item的个性化embed（预训练得到）； item之间的信息：transformer; 输出：softmax
+	
+	Multi-Level Interaction Reranking with User Behavior History
+		场景：上下文感知的rerank排序。推荐业务
+		动机：rerank阶段对用户历史行为的利用还不够（只是把行为历史作为embed放进来）；现有的rerank主要关注item-level的关系，忽视了item的细粒度特征的交互（行为历史中的item的细粒度特征和target item的细粒度特征的交互）；用rank后的结果可能是次优的（把输入当集合，而非有序list）。
+		方法：待排序list:处理成无序集合，用户行为:有序list。 初始集合和行为list分别做做self-att和bi-lstm处理；embed-layer； cross-item layer；set2list-layer（target item与用户行为序列）；
+
+
+
+特征处理
+	An Embedding Learning Framework for Numerical Features in CTR Prediction
+		场景：推荐系统中连续特征的embed学习框架
+		动机：工作推荐系统中，ctr预估的标准范式是 embedding+mlp
+
+学术探讨
+	Neural Collaborative Filtering vs. Matrix Factorization Revisited
+		背景：embed逐渐成为协同过滤的主流；最近的NCF（concat(user,item)+MLP）用MLP来代替直接内积操作等。文章通过实验证明MLP的一些缺陷，也许直接内积效果会更好。NCF使用MLP来代替之前的内积
+		核心：通过实验证明，一个仔细设计的内积 会超过MLP； 探索内积超过MLP的原因；MLP需要大量的数据来达到好的效果；内积对应矩阵分解；
+		结论：除非数据量非常大，或者embed维度比较小（64一下），否则内积要好于MLP；要谨慎使用MLP代替内积的操作，MLP可能不适合作为相似度测量， （推荐系统是：多个异构输入源（user/item/context）的相似性）
+		NCF： concat后的mlp 代替 向量内积
+		原因分析：MLP虽然理论上的近似器，但是考虑到目标函数复杂时，所需要的参数空间会变大，这回导致学习到这个的函数会很困难。
+		分类任务的最有一层也可以看作是内积。 NLP 也是遍布内积。   只依赖 user 和item embedding时，MLP学习内积相似性很困难，但是加了sideinfo就不一定了吧
