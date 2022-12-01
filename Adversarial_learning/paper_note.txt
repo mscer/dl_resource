@@ -1,0 +1,11 @@
+Adversarial Attacks and Defences Competition
+	背景：现有的模型容易受对抗样本攻击；
+	生成对抗样本的攻击方法：
+		FGSM:反转
+		FGM
+		ATN：GAN等
+	数据集：
+		dev
+		final
+		
+		
