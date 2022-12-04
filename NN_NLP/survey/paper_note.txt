@@ -1,0 +1,18 @@
+Emergent Abilities of Large Language Models
+	背景：讨论大模型的新发现的能力（“涌现”）。小模型中没有，只有大模型中才出现的能力； 大模型量变后产生的质变的能力；
+		涌现的分类：few-show prompting / 增强prompt策略；
+		本文目的不是为了区分达到涌现需要的方法，而是讨论先前工作的涌现行为例子。
+	方法：
+		few-shot prompt:
+			在待预测文本之前，增加input-ouput的例子当作上下文。在中方式在模型的scale到达一定程度后，效果会极具上升，而之前的效果则很随机；
+		增强prompt策略：
+			虽然few-show是最常见的与大规模lm交互的方式，最近的工作提出了其他几种prompt/ft策略等来增强PLM的能力；
+			chian of thought:通过多个中间step，提升模型的推理能力；
+			instruction following:执行新任务时，通过读描述task的指令，来提升效果；
+	讨论：
+		上述的方式都是在足够大的lm上才能体现出来，涌现线性的潜在解释：
+		
+			
+			
+	
+	
