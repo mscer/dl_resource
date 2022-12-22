@@ -1,3 +1,12 @@
+召回：
+	Neural Collaborative Filtering  有些过时
+		动机：DL只用在了建模辅助信息熵，而协同过滤的核心：user和item的召回仍然是是哦那个矩阵分解/内积等；本文提出NCF，将内积操作替换成concat+MLP
+		核心工作：探索如何利用dnn来学习user和item的交叉关系。
+		
+
+
+
+
 ctr
 	Deep Learning for Click-Through Rate Estimation
 		动机：ctr综述，讲述从浅层模型到深层模型的进展。着重特征交叉/用户行为序列/automl等
@@ -16,11 +25,19 @@ ctr
 			判别器：输入真实历史信息和future信息，判断是否合法
 			生成器：根据历史行为，生成future information: 对item的点击/非点击等行为等所有依赖用户反馈的信息
 			训练部分：参考irgan，使用强化学习进行训练
+
 			在线应用：1 重排阶段的强化学习； 2 精排的point-wise
 
+多任务:  
+	Progressive Layered Extraction (PLE): A Novel Multi-Task Learning (MTL) Model for Personalized Recommendations： 任务之间的强弱关联导致跷跷板效应如何处理
+		动机：解决多任务的跷跷板效应
+		背景：工业中尝试用MTL做推荐，通过不同任务之间的共享，提升学习效率。但是任务之间的弱关联、或者复杂关联导致多任务之间存在跷跷板效应； MMOE业界常用，但是这个模型也存在跷跷板效应
+		模型：设计shared的expert和 task特定的expert，减轻expert之间的有害影响。
+		创新点：分离task特定 expert和 shared expert; +多层结构； 明确share expert 和task expert； task= task expert+shared expert； 同时结合gate机制进行输入的re-weighting(动态weighting)
 	
-	Sampling Is All You Need on Modeling Long-Term User Behaviors for CTR Prediction
-		动机：对用户长期行为序列的利用上，由于在线rt的约束，会经常用retrieval-based的方法，但是这种方法是次优的；
+	ESMM   层次样本bias问题的处理
+		背景：cvr的两个问题：ssb。样本偏执：“未点击!=未成交”； 数据稀疏问题：
+		方式：通过ctr和 pctvr的方式建立loss， cvr作为模型的副产物，没有对应的target和loss。
 		
 
 
@@ -71,10 +88,11 @@ re-rank
 		动机：工作推荐系统中，ctr预估的标准范式是 embedding+mlp
 
 学术探讨
-	Neural Collaborative Filtering vs. Matrix Factorization Revisited
+	Neural Collaborative Filtering vs. Matrix Factorization Revisited  
 		背景：embed逐渐成为协同过滤的主流；最近的NCF（concat(user,item)+MLP）用MLP来代替直接内积操作等。文章通过实验证明MLP的一些缺陷，也许直接内积效果会更好。NCF使用MLP来代替之前的内积
 		核心：通过实验证明，一个仔细设计的内积 会超过MLP； 探索内积超过MLP的原因；MLP需要大量的数据来达到好的效果；内积对应矩阵分解；
 		结论：除非数据量非常大，或者embed维度比较小（64一下），否则内积要好于MLP；要谨慎使用MLP代替内积的操作，MLP可能不适合作为相似度测量， （推荐系统是：多个异构输入源（user/item/context）的相似性）
 		NCF： concat后的mlp 代替 向量内积
 		原因分析：MLP虽然理论上的近似器，但是考虑到目标函数复杂时，所需要的参数空间会变大，这回导致学习到这个的函数会很困难。
-		分类任务的最有一层也可以看作是内积。 NLP 也是遍布内积。   只依赖 user 和item embedding时，MLP学习内积相似性很困难，但是加了sideinfo就不一定了吧
+		分类任务的最有一层也可以看作是内积。 NLP 也是遍布内积。   只依赖 user 和item embedding时，MLP学习内积相似性很困难，；
+		！！！！DeepFM的FM部分也是在利用内积
