@@ -1,0 +1,5 @@
+Deep Reinforcement Learning from Human Preferences
+	主旨：探索人类对轨迹pair偏好，利用偏好来进行rl学习；这种方法可以不需要reward函数时，也能解决复杂rl任务；
+	背景：租金rl的成功很多都依赖设计巧妙的erward函数，但是许多任务的目标很复杂，不好量化。如果能解决这个限制，将极大的扩展rl的应用，推进ml的应用； 
+	方法：从human feedback中学习reward 函数，然后优化学习到的reward函数。：训练reward函数拟合human偏好，训练policy优化reward函数。优势：只需要行为偏好，不需要绝对的指令式任务描述；允许根据非专家用户的偏好学习；能扩展到大问题，依赖反馈少；
+	Instead of assuming that the environment produces a reward signal, we assume that there is a human overseer who can express preferences between trajectory segments；rlhf的最终目标是 解决没有reward函数的rl任务
