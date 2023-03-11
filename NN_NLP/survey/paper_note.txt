@@ -19,4 +19,10 @@ Emergent Abilities of Large Language Models
 
 A Survey on In-context Learning
 	
+	总结ICL的进程与挑战（ICL:）
+	ICL:通过描述性的自然语言，形成in-context example，这些example形成prompt作为待预测query的前缀，直接做预测，不进行模型训练。 定向挖掘PLM的能力？
+	ICL的优势：自然语言，解释性强；不需要训练；
+	ICL对设置敏感：如 prompt模板/in-context 样本的选择等
+	ICL的warm up: 非必要，但是加了可能效果更好。
+	ICL的指令设计：
 	
