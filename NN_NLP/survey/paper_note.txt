@@ -11,8 +11,12 @@ Emergent Abilities of Large Language Models
 			instruction following:执行新任务时，通过读描述task的指令，来提升效果；
 	讨论：
 		上述的方式都是在足够大的lm上才能体现出来，涌现线性的潜在解释：
+
+
 		
 			
 			
+
+A Survey on In-context Learning
 	
 	

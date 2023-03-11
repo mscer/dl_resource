@@ -1,3 +1,45 @@
+Suervey:
+
+	A Brief History of Recommender Systems
+		推荐模型和推荐系统框架
+		2005年之前：协同过滤在rs中占据主要作用
+		2006-2009：矩阵分解
+		2010-2016：lr、FM、FFM; 开始增加side-info
+		2016-：
+			特征交叉：wide&deep/deepFM/
+			特征高阶交叉：dcn/dcn2/pnn/nfm/afm
+			行为序列：din/dien/
+			gnn-based：	node embed/ gnn
+			drl-based:dqn
+			因果推断-based
+
+
+	A Survey on Neural Recommendation: From Collaborative Filtering to Content and Context Enriched Recommendation
+	推荐类型：
+		1 协同过滤； 问题：数据稀疏	 
+			1 表示性学习
+			2 给定表示时，user_item的交叉建模
+		2 content-based;user或者item的side info
+		3 context-based; 时空空间、历史行为等
+
+
+
+RS：
+	
+	Explore, Exploit, and Explain: Personalizing Explainable Recommendations with Bandits  EE+解释性
+		场景：将ee机制与解释性联合建模。 不同人对解释性的反应不同，同一个人不同上下文需求的可解释性推荐也不同。
+		应用：推荐系统的排序问题？
+		高德的特殊性： 地理位置导致的bias，召回受限于地理位置
+
+	Graph Neural Networks in Recommender Systems: A Survey
+		场景：rs的任务的核心是通过交互信息（cf）和side info 学习有效的user/item表示。 而GNN天然契合这个场景
+		动机：从交互数据的利用上来说， 早期的做法主要是单挑信息，即user-item的直接信息。 而gnn可以模拟多跳；gnn能同时考虑user-user,item-item.user-item的信息。
+		核心贡献：gnn在rs应用的类别体系，每个体系下的优缺点,未来的方向； graph构造 graph的表示学习
+
+
+
+
+
 召回：
 	Neural Collaborative Filtering  有些过时
 		动机：DL只用在了建模辅助信息熵，而协同过滤的核心：user和item的召回仍然是是哦那个矩阵分解/内积等；本文提出NCF，将内积操作替换成concat+MLP
@@ -27,6 +69,12 @@ ctr
 			训练部分：参考irgan，使用强化学习进行训练
 
 			在线应用：1 重排阶段的强化学习； 2 精排的point-wise
+
+	用户行为序列
+	[BST] Behavior Sequence Transformer for E-commerce Recommendation in Alibaba
+		动机：embed&mlp的 ctr框架，忽略了重要信号：用户的行为序列，如点击序列。wdl 未考虑行为序列；din 没考虑行为的序。
+		方法：利用bst：behavior sequence transformer,来提取行为序列信息，而后给mlp。序列中item的表示：id，类别id,位置特征；位置特征用时间差异表示
+		实验：离线auc，在线收益
 
 多任务:  
 	Progressive Layered Extraction (PLE): A Novel Multi-Task Learning (MTL) Model for Personalized Recommendations： 任务之间的强弱关联导致跷跷板效应如何处理
@@ -80,6 +128,39 @@ re-rank
 		动机：rerank阶段对用户历史行为的利用还不够（只是把行为历史作为embed放进来）；现有的rerank主要关注item-level的关系，忽视了item的细粒度特征的交互（行为历史中的item的细粒度特征和target item的细粒度特征的交互）；用rank后的结果可能是次优的（把输入当集合，而非有序list）。
 		方法：待排序list:处理成无序集合，用户行为:有序list。 初始集合和行为list分别做做self-att和bi-lstm处理；embed-layer； cross-item layer；set2list-layer（target item与用户行为序列）；
 
+
+
+	Real-time Short Video Recommendation on Mobile Devices 
+		端上实时重排
+		业务背景：短视频，实时性反馈高。需要更准确的预测用户需求。目前的推荐都是用翻页请求获取结果，存在两个问题：1 只有新请求来时，后端才能及时响应；2 用户的实时反馈没办法充分利用。
+		解决方式：将轻量级的模型部署到model上，提供实时排序能力，克服上述问题。端上实时重排
+		核心点：实时信号的特征工程；实时上下文重排
+		相关工作：edgerec
+		server侧：负责长期兴趣、edge侧负责即是兴趣；
+		特征工程：feature_diff 挺合理的看起来
+		模型结构：multiheadattention+ mmoe + beam search寻找最优序列
+
+	Globally Optimized Mutual Influence Aware Ranking in E-Commerce Search
+
+
+
+多样性： 
+	Managing Diversity in Airbnb Search
+
+
+	Practical Diversified Recommendations on YouTube with Determinantal Point Processes
+		背景：推荐系统里，精排产出的结果同质性太高，需要引入多样性。
+
+EE： ---该复习DRL了
+	DRN: A Deep Reinforcement Learning Framework for News Recommendation
+		背景：在线推荐存在三个问题：1 只对当前收益建模（ctr）; 2 很少考虑点击/未点击外的其他反馈信号（用户使用频次）；3 重复推荐形似item，造成用户的反感；本文提出基于DQN的推荐框架，明确对未来收益建模；
+		核心工作：利用DQN建模用户偏好和item的动态变化；提出新的探索策略，避免推荐不相关item。;考虑用户活跃度作为除了点击之外的反馈信号。
+		方法：
+			RL基本问题：mab和mdp。 与mab相比， mdp不仅可以建模当前的reward,还能考虑future的潜在reward.
+			使用用户的连续状态特征表示和连续动作特征表示，作为输入到多层DQN，来预测潜在reward(click);
+			模型框架：首先进行离线训练，在线时 agent与用户进行交互，然后更新网络；每个timestamp进行小更新，每个一段大的timestamp进行大更新一次；
+			特征：item的one-hot特征；user:用户点击特征； usr-item交叉特征； 上下文特征（日期、新鲜度等）
+			探索：强化学习中最常用的探索策略是贪婪和 ucb、汤普森采样； 本文提出，新建一个网络，在原来网络的基础上加上扰动，两个模型分别生成list，在线做interleave，加入探索网络的效果好，则用探索网络的参数去更新原来的网络。
 
 
 特征处理
