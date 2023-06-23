@@ -13,4 +13,5 @@ How Different are Pre-trained Transformers for Text Ranking
 		5 *加入doc中删除query中出现的 term，bert效果仍然还好，甚至好于只保留query term的指标。 这个地方是bert真正的优势，soft match
 	bert存在的问题：精确匹配关注不足，核心优势soft 匹配。
 		
-		
+
+Understanding the Behaviors of BERT in Ranking
