@@ -5,6 +5,8 @@ How Different are Pre-trained Transformers for Text Ranking
 		2 定量分析精确匹配和soft匹配对总体性能的贡献：bert是否包含精确匹配，bert是否能找到看似不相关的相关结果。
 	相关工作：
 		之前的工作证明bert的优势在于精确匹配和term重要性。
+	数据集：ms marco qa
+	对比基线：bm25
 	实验结论：
 		1 精确的文本匹配在bert中是一个很重要的因素
 		2 bert和bm25 各自存在一些效果不好的case.
@@ -15,3 +17,21 @@ How Different are Pre-trained Transformers for Text Ranking
 		
 
 Understanding the Behaviors of BERT in Ranking
+	背景：通过passage reranking（qa的段落排序） 和 doc ranking（网页排序）任务来评估bert的性能。评估bert对语义匹配和文本匹配的侧重点，预计相比点击模型（nn训练）的优势。
+	现状：在qa上效果好，但是doc ranking效果弱于基于特征的ltr和点击日志训练的nn模型。	
+	对比基线：bm25/ranksvm/k-nrm/conv-knrm
+	方法：bert双塔/query-doc拼接输入的cross_encoder的最有一层cls/ query-doc拼接cross_encoder的所有层cls/。训练时采用分类loss，尝试过pairwise loss但是效果上差异不大。
+	数据集：ms marco passage rerank和 trec doc ranking
+	效果评估：
+		*在marco上：交互式bert远超过knrm相关。但是双塔效果很差，表明bert是一个交互式match model；
+		*在trec ranking上：bert双塔和交互模型都弱于ltr和nn的点击模型。这表明 marco更像是seq2seq的任务，而doc排序相比之下需要更多的其他信号（bert的优势是surrounding text和target term的推断能力）（是否可以理解成，qa成内容是自包含的， 而doc排序中doc有很多跟query无关的term）
+	实验分析：
+		通过attention权重分析term的贡献
+		通过with/with-out分词term的重要性。 相比conv-knrm，大部分的单term移除对bert影响不大，但是几个特殊term的移除，会导致bert的打分极具变化。
+	结论：
+		bert在网页上的排序与之前的观察一致，bert采用邻域文本训练的方式，更适合与语义匹配的任务；而在web doc上，如果不适用点击日志，效果会差一些
+		bert是交互性的seq2seq的match model；而在web doc上，点击信号更重要。
+		
+	
+	
+	
