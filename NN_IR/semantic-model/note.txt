@@ -1,0 +1,16 @@
+How Different are Pre-trained Transformers for Text Ranking
+	背景：分析cross_encoder 和bm25性能区别，分析相同点和不同点。bert cross_encoder在文本检索上的收益来源还没有被很好的理解。
+	目标：
+		1 分析bert和bm25的差异；分析bert是否把bm25召回的文档排序更好；bert是否召回了bm25漏召回的文章。
+		2 定量分析精确匹配和soft匹配对总体性能的贡献：bert是否包含精确匹配，bert是否能找到看似不相关的相关结果。
+	相关工作：
+		之前的工作证明bert的优势在于精确匹配和term重要性。
+	实验结论：
+		1 精确的文本匹配在bert中是一个很重要的因素
+		2 bert和bm25 各自存在一些效果不好的case.
+		3 bert能补充召回bm25漏召回的55% 的case
+		4 *假如doc只保留query中出现的term，bert效果会变差。bert并没有充分利用精确匹配信号。
+		5 *加入doc中删除query中出现的 term，bert效果仍然还好，甚至好于只保留query term的指标。 这个地方是bert真正的优势，soft match
+	bert存在的问题：精确匹配关注不足，核心优势soft 匹配。
+		
+		

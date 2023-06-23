@@ -1,0 +1,6 @@
+基础结构：
+
+Efficient Language Modeling with Sparse all-MLP
+	背景：all-mlp作为transformer的替换，在plm任务上可以达到match transformer的效果，但是在下游任务中仍然处于落后。本文分析all-mlp的性能限制。
+提出结合moe到输入和特征的all-mlp，增加模型容量和表示能力。评估了下游6个任务的zero-show icl能力，超过了基于transformer的moe结构模型；
+	方法：之前的all-mlp 表示能力有限制，文章提出稀疏all-mlp. 将稀疏机制（moe）用到隐含层和输入层。
