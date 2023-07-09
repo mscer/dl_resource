@@ -1,3 +1,8 @@
+Book on Pretrained Transformers for Text Ranking: BERT and Beyond
+综述：两方便的应用：rerank（分类loss）和 学习稠密向量表示
+	
+
+
 How Different are Pre-trained Transformers for Text Ranking
 	背景：分析cross_encoder 和bm25性能区别，分析相同点和不同点。bert cross_encoder在文本检索上的收益来源还没有被很好的理解。
 	目标：
@@ -31,6 +36,12 @@ Understanding the Behaviors of BERT in Ranking
 	结论：
 		bert在网页上的排序与之前的观察一致，bert采用邻域文本训练的方式，更适合与语义匹配的任务；而在web doc上，如果不适用点击日志，效果会差一些
 		bert是交互性的seq2seq的match model；而在web doc上，点击信号更重要。
+
+Passage Re-ranking with BERT
+	
+
+
+	
 		
 	
 	
