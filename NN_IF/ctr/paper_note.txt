@@ -18,3 +18,23 @@ CTR预估
 		任务背景：特征re-weighting；
 		动机：autoint等会进行softmax，导致一些在特定场景的作用需要比较强的特征，被弱化掉。—》根据context提升特征重要性（比如引入gate机制？）
 		特性： 学习了个d维的信号，所有特征共享：所有特征都需要乘以这个信号？？？ 真的有用吗
+
+
+MaskNet: Introducing Feature-Wise Multiplication to CTR Ranking Models by Instance-Guided Mask
+	背景: ctr预估中 有效的捕捉高阶特征交叉很重要。一些研究表明 加性的特征交叉（尤其是fnn）在处理场景的特征交叉时，效果不好。本文提出通过instance-guided的mask，将乘法（feat embed和fnn层的guided）引入dnn中；：  Rendle的论文， 内积基线远远超过mlp。内积是vector的乘法，mlp则是加法。  （又见加法和乘法的pk）
+	动机：
+		受rendle的论文影响（基于乘法的内积操作效果 > 基于加法的mlp），能否将乘法操作引入到nn中。
+	核心方法
+		instance-guided mask:
+			embed后的输入，过两层fnn，得到每个filed embed中每个element-wise的权重值。
+		maskblock
+			ln层、instance-guided mask、fnn层
+		masknet
+			maskblock的组合方式，串行（类似rnn）或者并行（类似mlp）
+	效果
+		基线：deepFM/xDeepFm/autoInt
+	消融实验
+		效果是否好，消融实验、动机是否满足。
+		removing either instance-guided mask or layer normalization will decrease model’s performance and this implies that both the instance-guided mask and layer normalization are necessary components in MaskBlock for its effectiveness
+		
+	结论
