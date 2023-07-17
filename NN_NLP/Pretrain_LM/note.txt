@@ -4,3 +4,42 @@ Efficient Language Modeling with Sparse all-MLP
 	背景：all-mlp作为transformer的替换，在plm任务上可以达到match transformer的效果，但是在下游任务中仍然处于落后。本文分析all-mlp的性能限制。
 提出结合moe到输入和特征的all-mlp，增加模型容量和表示能力。评估了下游6个任务的zero-show icl能力，超过了基于transformer的moe结构模型；
 	方法：之前的all-mlp 表示能力有限制，文章提出稀疏all-mlp. 将稀疏机制（moe）用到隐含层和输入层。
+
+
+
+GLM: General Language Model Pretraining with Autoregressive Blank Infilling
+	背景: 三种主流方法：bert(自编码) gpt(自回归) T5(自编码+自回归)各有各的问题：自编码不擅长生成任务；自回归 nlu效果差；T5需要的参数太大；  position embed的建模
+	动机: 随机mask输入的连续span（follow 自编码）；生成被mask的span(自回归)；  
+	核心方法:  
+		相比T5的两个改进：2D position embed； span shuff
+		  	1 mask部分span； 2 span随机打乱； 3 自回归的方式训练模型生成多个span；
+			4span共享相同的mask 和位置embed（与长度无关的embed，自回归可以并行了）；5  只修改mask矩阵就行； 
+		训练目标
+			短文本nlu
+			长文本nlg；  生成和条件生成。
+	效果:
+		基线：bert/gpt/T5/Unilm/Bart
+	消融实验:
+	结论:
+
+LLaMA: Open and Efficient Foundation Language Models 
+	背景:
+	动机: 只是用开源数据训练的模型，拿到sota的结果
+	核心方法:
+		数据集：只用开源的，会做过滤； 
+		token:bpe
+		模型：
+			preln 
+			swiglu代替relu;	
+			相对位置编码
+		optimizer:
+			adamw + cosline leanring_rate schedule
+			gradient clip:1.0;  weight_decay:0.1
+			warm_step:2000
+	效果:
+		zero-shot
+		few-shot
+		基线：gpt3 palm flan-palm
+	消融实验:
+	结论:
+
