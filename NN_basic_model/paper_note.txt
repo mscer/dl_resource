@@ -1,2 +1,18 @@
 On the Stability of Fine-tuning BERT: Misconceptions, Explanations, and Strong Baselines
 	
+
+
+Foundation Transformers
+	背景: transformer是语言、视觉、语音 和多模态的大融合。但是不同模型用了不同的实现，比如preln postln。 本文提出transfomer的变种，引入sub-layernorm 、初始化策略来支持不同业务。
+	动机: transformer逐渐成为统一的模型框架，但是不同任务采用的实现不一样； 另外transfomer的一个痛点是训练稳定性问题； 基于此 文章提出了统一的transformer,适用于多种任务、多模态、并且优化训练稳定性，缓解大模型的训练困难问题。
+	核心方法:
+		新的ln:结合preln（输入上先做ln）和postln（输出上做ln）：增加subln，输入和输出上分别增加ln。 FNN上也在输入和输出(激活函数之前)上加了LN
+		*新的初始化：提出有理论保证的新的初始化策略，
+	效果:
+		实验： bert、gpt、beit、beit3等。包含encoder-only,decoder-only, vision-language 模型。
+		自回归：ICL
+		自编码：
+		NMT:
+
+	消融实验:
+	结论:
