@@ -1,0 +1,26 @@
+Correct Normalization Matters: Understanding the Effect of Normalization On Deep Neural Network Models For Click-Through Rate Prediction
+	背景:normalization是nn中的一项重要对技术，nn中mlp部分经常使用normalizatin，但是这一技术没有被系统研究过。1 normalization的种类（bn/ln/gn/in）；2 对不同层的影响
+	动机: 各种各种的normalization对ctr的影响是啥，是否存在最适合ctr任务的normlization，比如bn之于cv；ln之于nlp;  normalization work的原因是什么; 
+	核心工作：	
+		提出一种新的normalization方法；
+			
+		大量实验，验证不同normalization的影响。
+		发现影响normalization作用的核心因素
+	
+	核心方法:
+		simple ln:去掉bias和scale,参数。
+		VO-ln:去掉bias scale 去掉re-center;
+		normalization的位置：embed上、mlp上、 embed和mlp上
+		embed上的normalization:
+		VO-ln normalization作用的原因：
+			把nn的输出的得分降低，结合rule的激活函数，相当于去除了部分网络的输出。减少了噪声的影响，提升了训练速度。
+			
+		数值特征适用的normalization:
+			数值特征embed后，用LN最合适。
+		embed特征适用的normalizatin:
+			取决于具体任务，有时bn好，有时ln好
+		mlp适用的normalization:
+			ln比较好，simple ln或者VO-ln 效果更好。
+	效果:
+	消融实验:
+	结论:。 选择合适的BN，dnn甚至能超过XdeepFM
