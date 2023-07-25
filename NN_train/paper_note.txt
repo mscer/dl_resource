@@ -1,3 +1,37 @@
+
+
+Layer Normalization
+	背景:normalization可以提升训练效率，减少训练时间；bn减少了训练时间，但是bn不适用于rnn。rnn长度不定，bn无法直接使用
+	动机:ln不依赖batch_size.
+	核心工作
+	核心方法:
+		在每一layer上进行normalization.与batch_size无关；
+		rnn中的ln: scale和shift在time step中共享。 均值和方差每个time step分别计算。
+		每个step ln后 ，整体分布一致，更方便rnn的训练。
+	效果:
+	消融实验:
+	结论:
+
+How Does Batch Normalization Help Optimization?
+	背景: 分析BN起作用的核心原因:使优化更加平滑；BN：通过使layer input更加稳定来提升NN的训练效果；但是我们对BN起作用的原因了解的仍然不是很清楚。
+	动机:
+		研究bn有效的原因。
+	核心工作：
+		1 证明bn与internal covarate shift无关，或者没有直接联系
+		2  证明bn 有效的原因：使得优化显著显著平滑。从而使得可以用更大的学习率和更快的收敛速度。
+		3 不仅是BN,其他的normalization技术也有相似的作用。
+	核心方法:
+		1 通过绘制有无bn 模型train和test的性能，证明bn的作用；
+		2 通过比较有无bn 相同layer的分布，证明与internal covarate shift关联性不大； 增加噪声来模拟icl； 
+		3 实验的设计：比较同一层在前序层梯度更新与否的梯度差异。按照之前ics的理论，加入bn后，梯度差异会更小，但是实验发现加入bn后反而梯度差异更大了。
+		4 BN work的原因：使得优化更加平滑，传统的dnn优化存在局部最优问题，使得梯度下降不稳定，梯度消失或者膨胀，从而对初始化和学习率选择敏感
+		5 bn是否最有效：实验证明，其他形式的norm(1,2,p)效果也不差，甚至好于bn。
+		
+	效果:
+	消融实验:
+	结论: bn 有效的原因与icl关系不大，而是因为bn使得优化问题更加平滑，缓解了对学习率和初始化依赖，减轻梯度消失和梯度爆炸，可以用更大的学习了，提升训练稳定性
+
+
 Correct Normalization Matters: Understanding the Effect of Normalization On Deep Neural Network Models For Click-Through Rate Prediction
 	背景:normalization是nn中的一项重要对技术，nn中mlp部分经常使用normalizatin，但是这一技术没有被系统研究过。1 normalization的种类（bn/ln/gn/in）；2 对不同层的影响
 	动机: 各种各种的normalization对ctr的影响是啥，是否存在最适合ctr任务的normlization，比如bn之于cv；ln之于nlp;  normalization work的原因是什么; 
@@ -24,16 +58,4 @@ Correct Normalization Matters: Understanding the Effect of Normalization On Deep
 	效果:
 	消融实验:
 	结论:。 选择合适的BN，dnn甚至能超过XdeepFM
-
-
-Layer Normalization
-	背景:normalization可以提升训练效率，减少训练时间；bn减少了训练时间，但是bn不适用于rnn。rnn长度不定，bn无法直接使用
-	动机:ln不依赖batch_size.
-	核心工作
-	核心方法:
-		在每一layer上进行normalization.与batch_size无关；
-		rnn中的ln: scale和shift在time step中共享。 均值和方差每个time step分别计算。
-		每个step ln后 ，整体分布一致，更方便rnn的训练。
-	效果:
-	消融实验:
-	结论:
+ 
