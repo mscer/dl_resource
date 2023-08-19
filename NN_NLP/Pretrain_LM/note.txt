@@ -13,7 +13,7 @@ GLM: General Language Model Pretraining with Autoregressive Blank Infilling
 	核心方法:  
 		相比T5的两个改进：2D position embed； span shuff
 		  	1 mask部分span； 2 span随机打乱； 3 自回归的方式训练模型生成多个span；
-			4span共享相同的mask 和位置embed（与长度无关的embed，自回归可以并行了）；5  只修改mask矩阵就行； 
+			4span共享相同的mask 和位置embed（与长度无关的embed）；5  只修改mask矩阵就行； 
 		训练目标
 			短文本nlu
 			长文本nlg；  生成和条件生成。
