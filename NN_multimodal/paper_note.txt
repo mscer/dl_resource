@@ -1,0 +1,67 @@
+Geospatial Entity Resolution  
+	背景: 实体消歧：从不同源中，找到对应真实世界实体的相同实体。geo实体消歧的难点：不同源的scheme不同、信息缺失、经纬度偏差等。简称/别名/俗称问题，导致传统相关性不好算；小片段的差异，近距离，高文本相关性却不是一个实体（term weighting）；高密度品牌；
+	动机:  上述三个困难，尤其是地址确实问题，只依赖plm还不够。需要引入额外的知识，如“entity周围的其他entity的信息”。
+	相关工作：
+		1 实体消歧；之前的工作大多不适用geo实体消歧的场景
+		2 geo实体消歧；之前的工作大多仍然需要人工设计的规则和阈值； 并且没有考虑邻域信息
+		
+	核心工作：
+		1 geo-er：采用文本信息、地理信息、邻域实体信息来进行实体消歧。
+		2 邻域entity的聚合采用GAT的方式进行。
+	核心方法:
+		1 召回截断：编辑距离+绝对距离过滤（2KM）；
+		2 匹配模型：text encoder; distance embed; 邻域gat提升表示
+			text encoder:nsp任务 ft； name+addr+类别; 取cls
+			距离embed：数值embed的表示方式； 归一化+mlp
+			邻域gat: 问题：1 经纬度不准确； 2 高密度poi;3 大aoi数据； 思路：引入邻域gat信息。
+				1 获取pair中每个元素的近距离高相关性结果；
+				2 用bert建模每个邻域的name；
+				3 采用加法attention 建模邻域信息（1-hop gat）,同时edge的权重上加入距离衰减（1/dist）
+	数据集：19W数据， 三个source:foucesquare/yelp/openstreetmap/每个souce 4个城市。全英文
+	效果:
+		1 超过其他方法2.7%到7.2%	
+		2 采用plm的方式都要好一些，及时么有考虑空间关系；
+		3 geo-er在地址信息覆盖度高的数据上，收益最小。：原因地址信息丰富时，plm能解决很大一部分问题。
+	消融实验:
+		1 地址embed作用比邻域更大；平均3.3%提升；
+		2 邻域gat平均提升1.7%；
+		3 鲁邦性问题：迁移到unseen 城市时，指标有轻微下降； 新加坡下降最为显著，可能是因为新加坡是亚洲城市，poi更丰富和街道名字在英文中不常见。
+	结论:
+
+
+Mining Geospatial Relationships from Text （GEO-KG）；  多域；文本距离交叉；距离的作用不应该是绝对的。经纬度的自适应
+	背景:geo指数图谱，可以表示空间实体。但是现在的方法没有充分考虑联合的geo和地理文本信息。本文提出GTMiner，链路建模geo和文本信息来构造知识图谱，包含三部分：候选生成、空间关系预测、知识图谱增强（提高geo图谱的覆盖率和正确率）；  
+	动机:
+		难点1：高质量数据不好获得（而且数据有噪声，gps不准导致的经纬度错误）—》需要一种同时考虑geo信息和文本属性的方法，同时考虑空间距离、实体内容、地址描述等。
+		难点2：数据噪声高，信息缺失问题，需要进行多域信息的建模；
+		难点3：geo的数据系数问题：测试集很多在训练集（lbs典型问题，参考范围query召回范围预测）
+		难点4：多几个实体会有多个源；
+	相关工作：
+		geo数据库：实体加上经纬度；
+		geo-kg:增加实体间的关系；node属性：poi/aoi、类别；node之间关系；
+		
+	核心工作：
+		1 提出GTMiner，构建geo-kg; 从gis数据库中挖掘实体间的三种空间关系（相同、子点、隶属服务）；
+		2 采用plm、geo-encoder、geo-text交互来联合建模实体。
+		3 kg增强模块；
+		4 释放了4个数据集。
+	核心方法:
+		1 候选生成：
+			分类算法识别aoi；类别不均衡，每个正样本随机采样负样本（比例当做超参数）； 特征name和类别； （距离过滤也围绕aoi数据进行，非aoi数据呢？）
+		2  （核心）关系预测：textencoder（cross encoder； sent= name+addr+类别 ）、geoencoder(绝对距离归一化后过mlp)、 text-geo 交互结构(每个token拼接token和 距离embed，然后做加法attention。绝对值，softmax，加权和)
+			textencoder: sent= name+addr+类别； cross_encoder;		
+			geo-encoder:距离embed
+			text-geo: token粒度拼接距离embed， 过mlp； 多个mlp之间计算softmax，进行加权求和；
+		3 增强模块：
+			三角关系扩充边；
+	数据集：
+		name/address/经纬度/类目；	
+		人工标注
+		
+	效果:
+		与geo-er相比：geo-er和 gtminer都用了基于bert的textencoer,和 geoencoder，两个效果最好；同时gtminer加入了text-geo 交互模块，效果最好。虽然geo-er采用了邻域信息，但是效果仍然弱与加入了text-geo交互层的gtminer
+		地址属性：发现模型效果的提高与地址属性的覆盖率有关； 但是虽然西雅图数据上地址非空数据最多，他的指标却很低，分析发现是西雅图的地址信息描述的不一致导致（不同信息描述相同位置。）
+	消融实验:
+		通过lime text分析 文本中的重要词汇，分析结构的合理性。
+		geo-er的问题：距离作用体现不出来，因为大多数场景不需要具体起作用。而gtmier直接将距离建模到token中
+	结论:
