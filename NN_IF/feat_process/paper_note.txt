@@ -1,3 +1,39 @@
 AutoDis
 An Embedding Learning Framework for Numerical Features in CTR Prediction
 	跟memroy_net类似的一种结构，区别是这个做成了连续特征的自动离散
+
+MaskNet: Introducing Feature-Wise Multiplication to CTR Ranking Models by Instance-Guided Mask 基于输入特征的，特征re-weighting
+	背景: 一些研究者证明mlp在捕捉乘性特征上面很低效；为了解决这一问题，文章提出instance-guided mask，在feat embed上和mlp上执行元素级别的guide。MaskBlock:结合layernorm、instance-guided mask、fnn;现有的模型采用MLP来建模特征的高阶交互； mlp在建模内积上效率很低
+	动机: 能否通过引入特定的乘法操作，提升DNN的排序效果。文章提出通过instance-guided mask在embed层和mlp层上执行元素级别的乘法
+	核心工作：
+		1 提出了instance-guided mask执行元素级别的乘法
+		2 提出了基础block:maskblock 包含layer norm、instance-guided mask、fnn
+		3 新的排序框架maskNet
+		4 实验分析
+	相关工作：
+		网络结构：FNN:fm预训练embed来初始化网络权重；wide&deep; deepFM; deepCross; XdeepFM;autoInt;fibinet
+		featuer-wise mask 和gate: mmoe;hgn
+		normalization:bn ln ; 加速模型训练
+	
+	核心方法:
+		1 embd layer:sparse  feat通过embed得到稠密向量； 连续特征通过mlp得到稠密向量；完全embed话后的向量成为instance，后面根据此向量得到mask
+		2 instance-guided mask:通过instance-guidedmask从instance得到全局信息，动态调整不同层的特征的权重。采用由宽变窄的两层mlp结构；采用元素级别的乘法，来聚合来自instance的信息；
+			优势1：将乘法操作带入到nn中；
+			优势2：实现特征的re-weighting，期望达到减弱噪声的作用。
+		3 maskBlock:ln 、instance-guided mask、fnn； 通过三个层的结合，将加法的fnn变成同时包含加法和乘法的网络；ln放在激活函数之前；
+			作用在feature embed上：
+				instance-guided mask ->fnn->ln->relu
+			作用在mlp上：
+				instance-guided mask ->fnn->ln->relu
+		4 MaskNet:
+			基于maskBlock,提出两种结构：串行masknet（加深）和并行Masknet（i加宽）
+		5 predict layer:
+			sgimoid()
+			
+	基线：fm/dnn/deepFM/xdeepfm/deepcross/autoint
+	数据集：criteo/avazu/malware/  auc
+	效果: 串行masknet和并行masknet效果都很好，超过其他基线模型； 串行和并行之间差异很小。
+	消融实验:
+		 分别移除ln、instacne-guided mask、fnn；前两个ln和instance-guided mask影响很大。fnn则在串行和并行上的效果有差异。
+		 instance-guides：1 验证大批量数据上instance-guided的输出分布；2 比较不同instance的instance-guided的输出不同
+	结论:
