@@ -196,9 +196,8 @@ EE： ---该复习DRL了
 	An Embedding Learning Framework for Numerical Features in CTR Prediction
 		场景：推荐系统中连续特征的embed学习框架
 		动机：工作推荐系统中，ctr预估的标准范式是 embedding+mlp
-AutoDis
-	An Embedding Learning Framework for Numerical Features in CTR Prediction
 		跟memroy_net类似的一种结构，区别是这个做成了连续特征的自动离散
+
 
 	MaskNet: Introducing Feature-Wise Multiplication to CTR Ranking Models by Instance-Guided Mask 基于输入特征的，特征re-weighting
 		背景: 一些研究者证明mlp在捕捉乘性特征上面很低效；为了解决这一问题，文章提出instance-guided mask，在feat embed上和mlp上执行元素级别的guide。MaskBlock:结合layernorm、instance-guided mask、fnn;现有的模型采用MLP来建模特征的高阶交互； mlp在建模内积上效率很低
@@ -234,6 +233,25 @@ AutoDis
 		消融实验:
 			 分别移除ln、instacne-guided mask、fnn；前两个ln和instance-guided mask影响很大。fnn则在串行和并行上的效果有差异。
 		 	instance-guides：1 验证大批量数据上instance-guided的输出分布；2 比较不同instance的instance-guided的输出不同
+		结论:
+	Optimizing Feature Set for Click-Through Rate Prediction（特征选择，特征交互选择，只是选特征(l1正则化)，非instance上的特征选择）
+		背景: 之前的特征交叉选择方法：特征field选择或者固定特征集上的交叉；为了统一同特征和特征交互的选择，文章将特征交互的选择分解为相关特征的选择。设计基于特征的gate，判断是否特征需要采用； 无效特征的伤害：1推理速度慢/2 学习成本高。
+		动机: 现有的特征选择和特征组合各有各的问题，需要一种统一的方法，减少无用特征和无效特征组合。
+		核心工作：
+			1 明确特征选择问题
+			2 提出optfs,寻找最优特征集合
+			3 实验证明
+		相关工作：
+		核心方法:将特征维度和特特征交互维度的选择统一
+			特征维度的选择：feat_embed * feat_gate
+			特征交互维度的选择： 将特征交互的选择，退化为两个特征之间的选择，介绍特征交互的选择空间（10**12， 如果在field考虑，则是大约1000个， 但是field容易忽略底层特征）；
+			如何确定最终的featset：有了gate，仍然需要判断那些是需要保留的。
+			learning by continuation:??只跟0有关，为何还需要分母？？
+				分为两个阶段：阶段1 选择最优特征（gate向量随机初始化，后面会随着epch更新完T个epoch后，将一些特征 的gate变成0）；阶段2重训练模型；
+		基线：fm/deepfm/dcn.
+		数据集：
+		效果: 效果不是很显著。
+		消融实验:
 		结论:
 	
 学术探讨
