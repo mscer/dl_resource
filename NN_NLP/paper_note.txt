@@ -1,0 +1,224 @@
+基础结构：
+
+Efficient Language Modeling with Sparse all-MLP
+	背景：all-mlp作为transformer的替换，在plm任务上可以达到match transformer的效果，但是在下游任务中仍然处于落后。本文分析all-mlp的性能限制。
+提出结合moe到输入和特征的all-mlp，增加模型容量和表示能力。评估了下游6个任务的zero-show icl能力，超过了基于transformer的moe结构模型；
+	方法：之前的all-mlp 表示能力有限制，文章提出稀疏all-mlp. 将稀疏机制（moe）用到隐含层和输入层。
+
+
+
+GLM: General Language Model Pretraining with Autoregressive Blank Infilling
+	背景: 三种主流方法：bert(自编码) gpt(自回归) T5(自编码+自回归)各有各的问题：自编码不擅长生成任务；自回归 nlu效果差；T5需要的参数太大；  position embed的建模
+	动机: 随机mask输入的连续span（follow 自编码）；生成被mask的span(自回归)；  
+	核心方法:  
+		相比T5的两个改进：2D position embed； span shuff
+		  	1 mask部分span； 2 span随机打乱； 3 自回归的方式训练模型生成多个span；
+			4span共享相同的mask 和位置embed（与长度无关的embed）；5  只修改mask矩阵就行； 
+		训练目标
+			短文本nlu
+			长文本nlg；  生成和条件生成。
+	效果:
+		基线：bert/gpt/T5/Unilm/Bart
+	消融实验:
+	结论:
+
+LLaMA: Open and Efficient Foundation Language Models 
+	背景:
+	动机: 只是用开源数据训练的模型，拿到sota的结果
+	核心方法:
+		数据集：只用开源的，会做过滤； 
+		token:bpe
+		模型：
+			preln 
+			swiglu代替relu;	
+			相对位置编码
+		optimizer:
+			adamw + cosline leanring_rate schedule
+			gradient clip:1.0;  weight_decay:0.1
+			warm_step:2000
+	效果:
+		zero-shot
+		few-shot
+		基线：gpt3 palm flan-palm
+	消融实验:
+	结论:
+
+
+
+
+A Survey of Large Language Models
+	背景
+		统计lm到nn lm；大模型的涌现现象：icl cot等 rlhf的加持
+		文章的核心llm的4个方面：预训练、任务ft、使用、评估； prompt的设计 ；llm的应用
+		
+	动机
+		lm的历程：统计lm/分布式表示：word2vec/plm:elmo bert gpt bart t5 / LLM(涌现现象)
+		llm为何会出现涌现能力？
+	核心方法
+		llm定义：参数量大于10b
+		llm的scale law  有两篇论文opendi和deepfind分别提出了关系公式
+			模型的能力 = model size   +dataset size+ 计算量
+		llm的涌现现象：
+			不服从scale law。	
+			icl/cot/ instruction following。
+		LLM的发展历程：
+			gpt-2引入prompt,gpt3引入icl
+			gpt3.5:gpt的推理能力提升：code data上的训练(增量了推理能力以及COT能力) 以及RLHF（提升指令follow能力，减少有害内容的输出）
+			chatgpt:提升对话能力
+			gpt4:多模能力	
+		llm的资源：
+			checkpoint or api:
+				百亿参数：llama/mT5/T0/Flan-T5/m-T0/Falon-40B
+				千亿参数：GLM/OPT/BLOOM/PaLM
+			训练corpus:
+				books:
+				爬取：commoncrawl 噪声大， 需要清洗
+				reddit链接
+				wiki百科
+				code：github  stackoverflow
+				其他	
+			基础框架：
+				huggingface transformer
+				deepsee[d:分布式训练/内存优化，Zero
+				megatron-lm：分布式训练，
+				FastMoE:支持MoE
+		LLM的预训练：训练集处理/模型结构/训练加速/优化技术
+			训练集：
+				通用数据/特定数据（多语种文本/科学文本/code）
+				数据清洗：
+				Tokenization:
+					bpe(能提升多语种的token质量，gpt2 bart llama)/
+					wordpiece/ bert
+					unigram T5 mBart
+			模型结构：
+				encoder-decoder:T5/Bart/Flan-T5
+				decoder: gpt系列/
+				prefix-decoder:
+				结合Moe的扩展：switch transformer
+				transformer的配置：
+					norm层/:preln（好训练，但是效果弱于postln） postln(训练不稳定)
+					position embed：绝对位置/相对位置/旋转位置编码
+					activation函数/：gelu
+					attention:full-attention
+				预训练任务：
+					lm loss
+					dae:去噪自回归 先污染部分token， 训练目标是复原原来的token； T5 GLM
+					混合Deocoder：同时考虑lm 和dae
+			模型训练：
+				batchsize: 32k 到 3.2M个token
+				学习率：增加warm-up decay调整的学习率，
+				optimizer:adam/adamw 
+				训练稳定性问题：正则化和grad clip;
+				训练提升：
+					ZeRo.（deepseed）:分布式训练时节省内存占用。
+					混合精度训练：32位 到16位
+			LLM的adaptation:(指令tunning和对齐tunning)
+				指令tunning
+					平衡数据分布：
+					结合指令tunning和预训练：
+				指令tunning的作用：
+					提升llm的性能，提升llm follow人类指令的能力
+				对齐tunning：有用/诚实/无害
+					原因：llm只预测next word，但是少了对人类价值和偏好的考虑
+					rlhf数据：人工标注
+			参数微调：
+				adater tuning:插入新的nn到transormer block中
+				prefix tunning:连续型prompt
+				prompt tunning:离散prompt
+				*lora: 引入低秩分解的矩阵，到transformer中
+			LLM的使用：设计合适的prompt icl cot等 todo
+				
+				
+	
+					
+					
+						
+					
+			
+	效果
+	消融实验
+	结论	
+
+
+LLM
+
+Emergent Abilities of Large Language Models
+	背景：讨论大模型的新发现的能力（“涌现”）。小模型中没有，只有大模型中才出现的能力； 大模型量变后产生的质变的能力；
+		涌现的分类：few-show prompting / 增强prompt策略；
+		本文目的不是为了区分达到涌现需要的方法，而是讨论先前工作的涌现行为例子。
+	方法：
+		few-shot prompt:
+			在待预测文本之前，增加input-ouput的例子当作上下文。在中方式在模型的scale到达一定程度后，效果会极具上升，而之前的效果则很随机；
+		增强prompt策略：
+			虽然few-show是最常见的与大规模lm交互的方式，最近的工作提出了其他几种prompt/ft策略等来增强PLM的能力；
+			chian of thought:通过多个中间step，提升模型的推理能力；
+			instruction following:执行新任务时，通过读描述task的指令，来提升效果；
+	讨论：
+		上述的方式都是在足够大的lm上才能体现出来，涌现线性的潜在解释：
+
+
+
+		
+			
+ICL			
+
+A Survey on In-context Learning
+	
+	总结ICL的进程与挑战（ICL:）
+	ICL:通过描述性的自然语言，形成in-context example，这些example形成prompt作为待预测query的前缀，直接做预测，不进行模型训练。 定向挖掘PLM的能力？
+	ICL的优势：自然语言，解释性强；不需要训练；
+	ICL对设置敏感：如 prompt模板/in-context 样本的选择等
+	ICL的warm up: 非必要，但是加了可能效果更好。
+	ICL的指令设计：
+	
+
+Efficient Few-Shot Learning Without Prompts
+	背景:
+	动机:
+	核心方法:
+		stage1 使用对比学习的方式训练sentence transformer;
+		stage2 对stage1模型输出的cls 做分类ft
+	效果:
+	消融实验:
+	结论:
+
+COT
+Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+	背景：探索如何生成 chain of thought prompt,即产生一系列的中间推理步骤，来提升大规模语言模型的推理能力。
+	动机：预训练LM在数学/常识推理/符号认知没有取得很好的性能；本文探索如何使用简单的方法来提升语言模型的推理能力；
+			1 先前已经有了从语言模型中生成语言形式的中间步骤的能力。
+			2 简单的prompt 在nlp的一系列qa任务上取得了很好的效果，但是prompt在需要推理的场景，效果比较差；
+		本文结合1和2 ，提出具备推理能力的prompt，< input,chain of thougnt,output>，chain of thought 是一系列的中间推理步骤，来提升最终效果。
+		chain of thought的好处：复杂问题的分解能力；提升了模型的解释能力；训练简单，在few-shot prompt上加上chain of thought样本就行
+	方法：本文目标是生成一系列的chain of thought 来帮助提升推效果。 chain of thought 模拟人类解决问题的过程。
+		数学推理：人工组成8个有chain of thought 的few-shot样本;  由于小模型上生成的cot 流畅，但是罗技不通，chain of thought 只在模型参数量接近1000亿上只有才有显著收益
+		基线：lambda/palm/codex/gpt3
+		结论：cot是大模型才具备的能力（100b，千亿参数量），涌现能力
+		消融分析：尝试了数学公式/先答案后步骤/
+		鲁棒性：prompt样例的敏感性测试
+	
+综述
+
+	A Survey of Natural Language Generation
+		NLG综述文章
+		核心工作：NLG的模型，任务和数据集，未来方向；
+			NLP: 词法/句法/语义/篇章/
+			NLG：包含data2text and text2text； text2text: 文本精炼/文本扩展/文本改写和推理
+		基础method：
+			rnn seq2seq/transformer/attention/copy and point/ gan/memory network/gnn/pre-trained
+		文本精炼：
+			将信息从上文本中提取到短文本中/提出问题等；包含提取式/生成式
+			数据集
+			method
+		文本扩展：
+			短文本扩展/主题生成
+		文本改写和推理
+		图像描述 视频描述/视觉故事线
+		评估方式：
+			统计机器生成的文本与人工文本的覆盖率/距离等：
+				bleu/rouge/meteor/self-bleu
+				bleu：基于n-gram的权重，统计贡献频率；
+				rouge：测量两个句子的相似性；
+				meteor：bleu的改进型
+				
+			

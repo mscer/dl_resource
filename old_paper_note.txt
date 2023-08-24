@@ -5,29 +5,6 @@
 更倾向于从应用角度：novel 结构；一起巧妙的解决应用问题的方法
 
 
-多任务：
-	mmoe/ple
-
-排序：
-	deepFM
-召回：
-	MINd
-
-
-CRS:
-	A Two-Stage Approach toward Interactive Recommendation
-		场景：交互式推荐
-		
-
-RS：
-	
-	Explore, Exploit, and Explain: Personalizing Explainable Recommendations with Bandits  EE+解释性
-		场景：将ee机制与解释性联合建模。 不同人对解释性的反应不同，同一个人不同上下文需求的可解释性推荐也不同。
-		应用：推荐系统的排序问题？
-		高德的特殊性： 地理位置导致的bias，召回受限于地理位置
-
-	Graph Neural Networks in Recommender Systems: A Survey
-		场景：rs的任务的核心是通过交互信息和side info 学习有效的user/item表示。 而GNN天然契合这个场景
 
 
 NLP:
@@ -50,23 +27,6 @@ Summary
 		
 
 
-
-CIR
-	Leading Conversational Search by Suggesting Useful Questions 
-		场景：递进式引导；people also ask。假设已满足相关性
-		核心指标：useless, 能帮助用户的引导才有用。
-		数据:自定义构建，挖掘流程值得借鉴
-		方法：bert-based ranker  vs  gpt-based generator（最大似然，不需要负样本）
-	
-	Generating Clarifying Questions for Information Retrieval 
-		场景：澄清式引导；
-		数据： 人工规则构造
-		方法： lstm encoder_decoder； 或者强化学习
-
-	Asking Clarifying Questions in Open-Domain Information-Seeking Conversations 
-		场景：澄清式引导。 判断对结果的置信度，不置信时 进行澄清式的引导
-		数据
-		方法
 
 
 Prompt系列
@@ -187,9 +147,5 @@ Dall-e2	 Hierarchical Text-Conditional Image Generation with CLIP Latents
 
 	
 
-		
-	
-
-		
 
 	

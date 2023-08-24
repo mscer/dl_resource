@@ -1,9 +1,0 @@
-Efficient Few-Shot Learning Without Prompts
-	背景:
-	动机:
-	核心方法:
-		stage1 使用对比学习的方式训练sentence transformer;
-		stage2 对stage1模型输出的cls 做分类ft
-	效果:
-	消融实验:
-	结论:
