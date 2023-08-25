@@ -12,7 +12,7 @@ Layer Normalization
 	消融实验:
 	结论:
 
-How Does Batch Normalization Help Optimization?
+How Does Batch Normalization Help Optimization?  bn起作用的真正原因-》更平滑的优化
 	背景: 分析BN起作用的核心原因:使优化更加平滑；BN：通过使layer input更加稳定来提升NN的训练效果；但是我们对BN起作用的原因了解的仍然不是很清楚。
 	动机:
 		研究bn有效的原因。
@@ -32,7 +32,7 @@ How Does Batch Normalization Help Optimization?
 	结论: bn 有效的原因与icl关系不大，而是因为bn使得优化问题更加平滑，缓解了对学习率和初始化依赖，减轻梯度消失和梯度爆炸，可以用更大的学习了，提升训练稳定性
 
 
-Correct Normalization Matters: Understanding the Effect of Normalization On Deep Neural Network Models For Click-Through Rate Prediction
+Correct Normalization Matters: Understanding the Effect of Normalization On Deep Neural Network Models For Click-Through Rate Prediction； ctr任务上不同部分的layern norm的选择
 	背景:normalization是nn中的一项重要对技术，nn中mlp部分经常使用normalizatin，但是这一技术没有被系统研究过。1 normalization的种类（bn/ln/gn/in）；2 对不同层的影响
 	动机: 各种各种的normalization对ctr的影响是啥，是否存在最适合ctr任务的normlization，比如bn之于cv；ln之于nlp;  normalization work的原因是什么; 
 	核心工作：	
@@ -59,3 +59,29 @@ Correct Normalization Matters: Understanding the Effect of Normalization On Deep
 	消融实验:
 	结论:。 选择合适的BN，dnn甚至能超过XdeepFM
  
+On Layer Normalization in the Transformer Architecture (preln和postln的比较; )
+	背景: transformer的训练，需要引入学习率的warm-up阶段，这一阶段对最终的性能很重要，但是warm-up会减慢优化过程，并且带来了更多的超参数需要调节。 提出了mean filed 理论，证明1 训练初始阶段，postln的期望梯度在输出层会更大，如果直接使用大学习率会导致训练不稳定问题，引入warm-up可以缓解；其次如果采用preln,训练初始阶段的表现会更好，甚至可以去掉warm-up阶段。
+	动机:能否找到一种方法，去掉warm-up, 减少对超参数的依赖。经过试验发现layey norm可以控制梯度值的大小，post-ln训练不稳定的原因是靠近输出侧梯度很大， 容易训练不稳定。那么能否找到ln合适的位置，在训练效果和训练稳定性上达到平衡。
+	核心工作：
+		研究preln和postln在初始训练阶段上，的梯度差异。
+		证明用preln时，可以去掉warm-up策略。（只是去掉warm-up,但是学习率调整还需要）
+		初始化阶段，preln则没有任何梯度爆炸梯度小时问题，可以去掉warm-up阶段。
+		1 探索preln postln在初始阶段的grad变化，并证明为什么postln 必须要有warm-up
+		2 证明可以去掉pre-ln的warm-up阶段。结合合适的学习率调整，训练时间可以大幅度减少。
+	相关工作：
+		1 对于cnn。rnn 一般是刚开始选择大的学习率，然后逐步减少学习率；只有在大batch时才会考虑用warm-up
+		2 但是在优化transformer时，经常需要学习率的warm-up;  尤其是post-ln,不加 warm-up或者warm-up比较小时，会存在训练发散现象。 而preln甚至可以去掉warm-up
+
+	核心方法:
+		使用postln时，靠近输出层的梯度很大， 需要更小的学习率,帮助收敛; 否则梯度过大会存在训练不稳定问题；
+		layer norm可以起到控制gradient值的作用。
+		1 学习率warm-up阶段的实验现象
+
+			在同一任务上，分别实验不同优化器adam和sgd,在不同warm-up设置下的效果。post-ln
+			结论：1 对于两种优化器，warm-up都是必须的；warm-up的设置对学习过程影响大，warm-up越大效果越好
+		2 理解transformer的参数初始化，经过一系列的简化，
+			1 postln的梯度与层无关； 而preln的梯度会随层数加深，缓慢减小。
+			2 实验验证：postln 和preln在不同层的梯度期望，符合假设。
+		3 对preln的实验：
+			1 对于preln来讲，warm-up不是那么重要。
+			2 使用更大的学习率时，preln收敛更快。
