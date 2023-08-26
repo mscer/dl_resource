@@ -1,0 +1,21 @@
+如何区分 noisy样本和 hard样本？？
+
+MentorNet: Learning Data-Driven Curriculum for Very Deep Neural Networks on Corrupted Labels
+	背景: dl有能力记住所有的数据，哪怕数据的label是随机噪声，为了解决噪声数据上的overfitting问题，提出了mentornet来监督模型的学习； mentornet提供课程信号，来辅助student 模型专注于正确的样本上；
+	动机: 从课程学习借鉴，渐进学习sample。 通过课程来指导student战胜样本噪声问题（给正确样本更高的采样机会）。mentor net 完成更新后，固定参数，用来指导student的学习；mentor net更新时，student 的参数固定。一个合理的课程可以辅助模型每次选择更有可能是正确的样本进行训练。
+	核心工作：
+		1 提出了一种新的方法，用于label noisy场景下的基于数据驱动的课程学习方法
+		2 讨论了一种用于梯度下降的课程学习算法
+	相关工作：
+		课程学习：给每个样本设置一个样本weight因变量v, 模型参数w，交替进行w和v的最小化。一种常用的做法是self-paced learning。更新w时，只采用v=1的样本，而更新v时，将loss小于特定值的设置为1； v的作用形似就是课程策略。已经提出了多种课程策略设置方法。
+		本文主要考虑从data中学习课程策略。
+	核心方法:
+		1 从data中学习课程策略；
+			现有的课程策略都是采用预定义的形似，缺少与student模型的交互反馈。本文提出额外建议一个网络，mentornet，用来动态学习每个样本的权重。
+		2  mentornet的结构：
+			2层fcl; 输入：sample 的label进行embed，当前学习进度的embed，以及样本在不同epoch下的loss，以及loss与平均loss的差异经过双向lstm编码后的输出。根据当前学习状况，以及样本的loss变化，得到样本的权重。
+	基线：
+	数据集：
+	效果:
+	消融实验:
+	结论:
