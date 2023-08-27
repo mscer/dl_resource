@@ -132,19 +132,6 @@ Suervey:
 
 
 
-召回：
-	Neural Collaborative Filtering  有些过时
-		动机：DL只用在了建模辅助信息熵，而协同过滤的核心：user和item的召回仍然是是哦那个矩阵分解/内积等；本文提出NCF，将内积操作替换成concat+MLP
-		核心工作：探索如何利用dnn来学习user和item的交叉关系。
-	
-
-	Multi-Interest Network with Dynamic Routing for Recommendation at Tmall
-		场景：RS召回
-		动机：现有的nn技术用单一向量表示用户不足以表示用户兴趣的动态变化；MIND通过多向量来表示用户，表达用户兴趣的多样性。利用胶囊路由机制，设计多兴趣提取器。 胶囊网络的特性（动态路由，输入是多个向量，相当于输入是多向量的形式，有点像多个独立单元的特征re-weighting，输入是多个并行的组，而不是在iid分布假设）？
-		方法：多兴趣提取层 采用动态路由自适应聚合用户行为；核心式学习到根据用户交互的item和用户画像的信息 学习到用户的表示，以及item的表示。 samples softmax 对样本空间进行采样。 藉由胶囊网络的动态路由机制，来产生用户的多兴趣描述。参考算法描述理解动态路由。
-		实验：offline /online。 online基线：item-based cf（cf）； youtube dnn(content-based)
-
-
 
 
 
@@ -312,11 +299,21 @@ EE： ---该复习DRL了
 			特征：item的one-hot特征；user:用户点击特征； usr-item交叉特征； 上下文特征（日期、新鲜度等）
 			探索：强化学习中最常用的探索策略是贪婪和 ucb、汤普森采样； 本文提出，新建一个网络，在原来网络的基础上加上扰动，两个模型分别生成list，在线做interleave，加入探索网络的效果好，则用探索网络的参数去更新原来的网络。
 
+召回：
+	Neural Collaborative Filtering  有些过时
+		动机：DL只用在了建模辅助信息熵，而协同过滤的核心：user和item的召回仍然是是哦那个矩阵分解/内积等；本文提出NCF，将内积操作替换成concat+MLP
+		核心工作：探索如何利用dnn来学习user和item的交叉关系。
+	
+
+	Multi-Interest Network with Dynamic Routing for Recommendation at Tmall
+		场景：RS召回
+		动机：现有的nn技术用单一向量表示用户不足以表示用户兴趣的动态变化；MIND通过多向量来表示用户，表达用户兴趣的多样性。利用胶囊路由机制，设计多兴趣提取器。 胶囊网络的特性（动态路由，输入是多个向量，相当于输入是多向量的形式，有点像多个独立单元的特征re-weighting，输入是多个并行的组，而不是在iid分布假设）？
+		方法：多兴趣提取层 采用动态路由自适应聚合用户行为；核心式学习到根据用户交互的item和用户画像的信息 学习到用户的表示，以及item的表示。 samples softmax 对样本空间进行采样。 藉由胶囊网络的动态路由机制，来产生用户的多兴趣描述。参考算法描述理解动态路由。
+		实验：offline /online。 online基线：item-based cf（cf）； youtube dnn(content-based)
 
 
-	
-学术探讨
-	
+
+
 
 
 long-tail 
