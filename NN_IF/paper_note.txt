@@ -115,6 +115,43 @@ ctr
 	ESMM   层次样本bias问题的处理
 		背景：cvr的两个问题：ssb。样本偏执：“未点击!=未成交”； 数据稀疏问题：
 		方式：通过ctr和 pctvr的方式建立loss， cvr作为模型的副产物，没有对应的target和loss。
+
+	Multi-Scenario Ranking with Adaptive Feature Learning （多场景下的自适应特征学习，体征reweighting，（跟我一样的操作，reweighing和特征间的内积）
+		背景: 多场景的优势：多场景之间迁移，缓解数据稀疏问题，减少维护成本。
+			单场景下：数据稀疏导致模型效果差； 多个模型迭代维护成本高；-》多场景学习
+			多场景的三种形式：1 shared bottom的辅助任务形式；2 多塔形式；3 moe形式；这些结构都采用share bottom的形式，share bottom可能会成为优化的瓶颈。本文提出maria，包含三个部分：feature scaling（识别特征的作用强度，reweighting）/feature refinment/feature correlation建模；特征表示concat后进入moe结构。	
+		动机:
+		核心工作：
+			1 提出当前的MSL的问题：忽略了不同场景下的特征自适应学习问题；
+			2 提出了更适合与推荐和搜索的特征自适应学习框架；包含三个特征模块
+		相关工作：多场景学习的三种形式（全部都是share bottom的特征）：
+			1 辅助任务：增加辅助自网络，输出加载最后一层，因为场景部分比较低维，放到最后一层避免作用体现不出来。一般都是影响输出层，对中间层影响很小。
+			2 多塔（star）：不同场景的数据量存在不平衡问题，提出多塔结构，每个场景拥有自己的tower，避免场景之间互相影响。
+			3 moe/ple: 受bagging启发，训练多个expert做预测。
+		核心方法:
+			基础特征处理
+				1 连续特征离散化； 三种核心特征：user侧/item侧/context侧
+				2 7个域过embed: user/item/user 属性/item属性/triigger/trigger属性/场景/上下文
+					<user,user属性>,<item,item属性>,<trigger,trigger属性>,context,场景。映射到相同维度
+				3 用户行为序列：序列上进行transformer后，与trigger特征(搜索下用query，推荐用item)计算self-attention;
+				4 不同域特征concat一起；
+			1 feature scaling:
+				为每一个特征计算一个缩放因子(没有sigmoid约束)，扩大或者缩小特征作用； 计算reweighting时，加入了stop_grad操作。input部分则额外加入了场景/用户/item的embed
+			2 feature refinment
+				在instance粒度，进一步做特征reweighting，每个特征设计多个refiner(fc用relu),多个refiner的拼接,加上场景embed， 过singmod作为特征gate.   特征乘以gate值，进行二次缩放[0-1]
+			3 特征corrleation 建模：
+				特征间的元素乘法，内积
+			4 moe部分：
+				根据场景embed生成gate向量，expert之间加权计算得到最后的输出。
+			5 预测：
+				参考多塔结构，moe产出的向量过两个不同的fc，分别是i场景特定的和share的，同时根据场景信息产出两个fc之间的加权系数。
+		基线： hard share; bottomshare; mmoe;ple ;star
+		数据集：20W user,50W item, 8000W曝光，3000W 点击
+		效果: 相对提升6%到12%
+		消融实验: 三个模块都有作用，两个特征reweighting和一个特征内积。
+		结论: 自适应的特征reweighting，加上特征内积（跟我的做法几乎一样）
+
+
 		
 
 
