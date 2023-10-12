@@ -2,6 +2,49 @@ Book on Pretrained Transformers for Text Ranking: BERT and Beyond
 综述：两方便的应用：rerank（分类loss）和 学习稠密向量表示
 	
 
+Ranker
+Passage Re-ranking with BERT
+	背景: bert在qa nli上取得了很好的效果，本文将bert应用到passage rerank上。
+	动机: 大规模数据集的给出ms macro passage ranking，以及 bert 广义目标的语言模型。探索ir上的效果
+	核心工作：
+	相关工作： pre-bert的nn模型：drmm/knrm/；  qa包含三部分：召回，排序。生成。 ir这主要处理前两部分。
+	核心方法: cross encoder  cls 过单层mlp， sigmoid函数
+	基线： bm25/ knrm/;  bert远高于其他
+	数据集：
+	效果:
+	消融实验:
+	结论:
+
+Investigating the Successes and Failures of BERT for Passage Re-Ranking 
+	背景: bert在passage rank上取得了sota结果，本文要分析结果，来更好的理解取得sota的原因。利用ms marco来分析成功和失败的原因。
+	动机: 使用question和passage表示的bert，就能在ir上拿到sota结果，通过分析bert的排序结果，找到bert效果好的原因
+	核心工作：提出了bm25 和bert的几个假设，分别验证假设是否成立，以及分析bert执行好和不好的query类型
+	相关工作： 预训练后的bert，额外加一层后进一步ft,在一些任务上都有了sota结果。mrc/nli等
+	核心方法: 在ms Marco上ft过的bert模型。 
+	基线：
+	数据集： ms macro数据集 bing搜索的query和人工标注的是否相关。
+	效果:  
+		1 相比bm25 ,bert结果的tf会低一些。
+		2 从统计上看，随着tf的上升，mrr效果会有下降。bm25
+	消融实验:
+		问题1 bert能不做语义相似性，但是 当对term的语义理解与想要的不一样时，效果会变差。尤其是query自身有歧义时。bert会更倾向于给出热门的结果，而且热门的远大于非热门的。
+	结论:
+		We showed that BM25 is more biased towards high query term frequency and this bias hurts its performance. We demonstrated that, as expected, BERT retrieves passages with more novel words
+
+
+Learning-to-Rank with BERT in TF-Ranking
+	背景:  
+	动机:认为 cls+二分类的方式不适合排序任务，应该引入ltr
+	核心工作： query+passage 拼接过cross encoder
+	相关工作： 
+	核心方法:  形成一对多的正负对，分别进行 point-wise/pair-wise/list-wise的实验（softmax）
+	基线：
+	数据集： ms macro 数据集； rerank实验（top1000rank）； full ranking (所有集合rank)实验；
+	效果: softmax>pairwise>point wise;   与对比学习比呢？  Infonce infonce 假如负样本就是 query的负样本，那么就等价于sofmax的listwise; 如果是随机负采样， 则不一样。
+	消融实验:
+	结论:
+
+
 
 How Different are Pre-trained Transformers for Text Ranking
 	背景：分析cross_encoder 和bm25性能区别，分析相同点和不同点。bert cross_encoder在文本检索上的收益来源还没有被很好的理解。
@@ -37,11 +80,97 @@ Understanding the Behaviors of BERT in Ranking
 		bert在网页上的排序与之前的观察一致，bert采用邻域文本训练的方式，更适合与语义匹配的任务；而在web doc上，如果不适用点击日志，效果会差一些
 		bert是交互性的seq2seq的match model；而在web doc上，点击信号更重要。
 
+
 Passage Re-ranking with BERT
 	
 
 
-	
+
+
+Recall
+Dense Text Retrieval based on Pretrained Language Models: A Survey； 
+  	总结：语义召回和term召回是互补的， 因为语义存在语义压缩现象，而term召回会考虑term的命中与否。——问题 ： term引入term weighing是否会退化成语义？？； 向量表示能否变长？；dense models are easier to be affected by adding non-relevant contents
+	背景: 信息检索逐步发展为有效的表示文本，以及建模相关性match上； 另外 plm的zero-shot能力比较差时，面对新query效果会弱与term；
+	核心工作： 
+		1 重点介绍plm-based ir；
+		2 深度向量召回的实用技术；
+			模型结构、训练方法、index机制、召回pipeline
+		检索类型：doc/passage/sentence 
+	相关工作：
+		bow-> NIR(pre-bert)->  plm-based ir
+		系数召回：term weighting/ 紧密度、term扩展
+	核心方法: 
+		负样本需要通过采样挖掘得到
+
+		开源数据集和评估指标：  doc、passage
+			ms macro;
+			dureader-retrieval;
+		评估指标	
+			map、mrr、ndcg
+		开源代码库：
+			sentence-bert
+			openmatch
+
+	核心内容：
+		模型结构
+			基础：transfromer; pretrain+ft
+			bi-encoder： colbert
+			cross-encoder: 使用cls或者 token向量均值。
+			bi-encoder and cross-encoder: bi做召回，ce 做ranker；  ce给bi构造训练预料等。
+			与稀疏召回对比：
+				dense召回擅长于解决语义问题：  压缩到特定长度，不可避免的存在忽视部分语义的情况。
+				稀疏召回商场与精确匹配问题。
+			稀疏召回和稠密召回各有优势，可以互补。 稠密无法代替系数原因有几种分析，仍然输出待探索问题。
+
+		模型训练
+			1 loss函数：-log-likehood(softamax后的概率分布，正样本越大越好，相对的好坏))；  像对比学习的loss(infonce); triple loss;rank侧则使用bce loss 二分类判定是否相关。（绝对的相似）； 其他考虑doc-doc的相似性作为分母。
+			2 相似性度量：内积、cos、欧式距离。 主要用cos和内积； cos和内积的区别：cos会进行归一化，内积天然有值的绝对序。
+			3 负样本选择： false negative样本的处理；  随机负样本+hard选择+ false negative
+				1 in-batch负； 类似对比学习， 扩充batch-size,提升训练效果。 问题：不能得到足够的有效负样本；
+				2 cross-batch负；扩充负样本的量。
+				3 hard负样本： 1和2 都是随机负样本，缺乏hard负样本。  
+					1 static hard样本			
+						高bm25的负
+					2 动态hard样本
+						采用训练的模型， 抽取高打分的负样本
+					3 false negative 检测：
+						向量召回对负样本质量很敏感。
+						采用cross-encoder 进行false negative的检测。
+			4 数据增强：
+				1 引入其他辅助数据集
+				2 大模型蒸馏
+			5 深度召回模型的预训练
+				仍然采用bert的预训练方式，但是模拟检索过程。
+				1 任务自适应pretrain:
+					ICT: 
+				2 生成增强pretrain:
+					使用bart生成query和doc
+				3 召回增强预训练。  增强 召回能力
+					realm/rag
+				4 表示增强预训练：   增强cls的语义表示能力。
+					cls在预训练时，并不作为sentence表示； 加入decoder 让cls生成原始输入，提升cls的能力；但是要避免decoder陷阱（当decoder过分强大时，decoder自身依赖上文即可完成后续的生成）
+					对比学习增强
+					
+		向量建库
+			稀疏召回：es
+			稠密召回：
+			anns:近似最近搜索；
+			量化：
+
+		集成到系统
+			基于bi-encoder的召回
+			基于cross-encoder的rank
+			召回-rank pipeline的训练：
+				1 分开并行训练；
+				2 自适应训练：两个模块交替训练。
+
+		
+	基线：
+		bm25  dpr
+	数据集：
+	效果:
+	消融实验:
+	结论:
 		
 	
 	
