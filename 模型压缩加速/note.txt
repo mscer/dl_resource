@@ -1,0 +1,20 @@
+A Survey on Model Compression and Acceleration for Pretrained Language Models
+	背景: plm效果好，但是耗费资源多，rt长。本文着重介绍plm的推理问题，包括模型压缩和加速的方法。高效推理：是ML的推理更快、耗费更少资源、更少的内存和硬盘。 本文主要介绍：plm模型的压缩和加速。包含量化、蒸馏等； 几个评估指标：flops，推理一次需要的float计算数量； 推理时间；加速比，加速方法相比不加速的提升比例；鲁棒性；小模型更容易遭受对抗攻击，即鲁棒性更差。
+	动机:
+	方法：
+		weight share:
+			可以减少模型的参数量，但是rt不会降低
+		基于低秩分解：
+			分解layer的参数（1层大参数，变成多层小参数）； 减少参数量
+			embed分解； Since the power of Transformer mainly comes from its contextual learning ability, the parameters in the token embedding layer are not effcient
+		基于Pruning 
+			
+		量化：
+			降低浮点数长度。分文post-train 量化；训练后再进行量化；和训练过程中的量化； post性能损失大， 一般都用训练过程中的，比如混合精度之类的。
+		蒸馏：
+			设计loss函数，减少teacher和student中间层输出的差异。
+			logit-based kd:loss:kl 散度、mse、cosi等；
+			feature-based kd:对齐teacher和student的中间层
+			
+	
+	结论:

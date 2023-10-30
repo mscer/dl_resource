@@ -3,6 +3,7 @@ Book on Pretrained Transformers for Text Ranking: BERT and Beyond
 	
 
 Ranker
+
 Passage Re-ranking with BERT
 	背景: bert在qa nli上取得了很好的效果，本文将bert应用到passage rerank上。
 	动机: 大规模数据集的给出ms macro passage ranking，以及 bert 广义目标的语言模型。探索ir上的效果
@@ -14,6 +15,36 @@ Passage Re-ranking with BERT
 	效果:
 	消融实验:
 	结论:
+Document Ranking with a Pretrained Sequence-to-Sequence Model ——T5是否见过这些预料？
+	背景:  现有的rerank都是只用encoder，本文 讲怎么用encoder-decoder来做rank， 并且encoder-decoder的效果好于encoder-only
+	动机:
+	核心工作：1 一种新的使用encoder-decoder的排序模型；2 消融和对比实验
+	相关工作： bm25召回， cross encoder排序
+	核心方法: 
+		1 构造模板：Query: [Q] Document: [D] Relevant:； query替代[Q],doc 替代[D]。 decode生成true或者false;  相关性= true和false两个token的softmax归一化权重。 本文用了t5可以用到其他模型上，比如bart、unilm等
+		2 在ms macro上训练，其他ir测试集上测试。 测试zero-shot能力。
+	基线： bm25 /bm25+bert large
+	数据集： ms macro上与基线模型对比。 其他几个用下验证zero-shot能力。
+	效果:  t5 在macro上超过sota;  在zero-shot上 t5-3b效果也好于之前的ft过的bert; 
+	消融实验: 
+		参数量的影响：
+			“T5-base 超过bert-large（参数量更大）”；  但是t5-3b的收益是否来源于参数量的提升，不好对比。
+		训练集大小的影响：
+			1 训练集增加是，bert和t5效果都会变好；
+			2 数据量少时，T5也好于bert
+			3 zero-shot时，原始数据上最好的 在新数据上不一定最好，可能会存在overtrain问题。It makes sense that fine-tuning more and more on a specific dataset would reduce the model’s ability to generalize to other domains.
+			4 如何选择排序的准则：只用true的概率？ 所有token上softmax，还是 只在true或者false上softmax,实验证明true和false上softmax效果更好。 1 可不取，2 和3 差异不大。
+			5 为何t5效果更好：
+				1 bert上， cls上的一层mlp需要完全的重新训练。 只利用了encoder的知识
+				2 t5上， decoder的输出本身已经含有了语义信息（参考输入template），即T5decoder侧具备额外的能力。
+				3 进一步验证实验，尝试用其他token（颠倒true/false）模拟t5的 语义mapping，大批量数据时，与true/false一致。但是小流量数据时，由于语义的不一致， t5效果更差。
+		
+	结论:
+		1 nn-based rank模型仍需要大量数据的训练才能与ltr match；但是 transformers-based的模型能超过ltr
+		2 encoder-decoder的模型在排序上超过encoder-only，尤其是在data-poor场景下。
+		3 验证encoder-decoder好的原因，是因为decoder部分具有的本身要输出流畅的text能力，能帮助提升效果。———— 生成的方式将下游任务与预训练统一了，而encoder-only的模型是全新的ft
+
+
 
 Investigating the Successes and Failures of BERT for Passage Re-Ranking 
 	背景: bert在passage rank上取得了sota结果，本文要分析结果，来更好的理解取得sota的原因。利用ms marco来分析成功和失败的原因。
@@ -81,8 +112,6 @@ Understanding the Behaviors of BERT in Ranking
 		bert是交互性的seq2seq的match model；而在web doc上，点击信号更重要。
 
 
-Passage Re-ranking with BERT
-	
 
 
 
@@ -171,7 +200,32 @@ Dense Text Retrieval based on Pretrained Language Models: A Survey；
 	效果:
 	消融实验:
 	结论:
-		
+
+Que2Search: Fast and Accurate Query and Document Understanding for Search at Facebook
+	背景:  使用xlm或者xlm-roberta, 结合多任务、多模态。的sentence表示模型，在离线和在线业务上效果提升。在线rt<1.5 ms 纯cpu调用
+	动机: ads
+	核心工作： 限制：属性信息有噪声、跨语言问题、多模态问题、rt限制。
+	相关工作： facebook之前的向量召回模型还是ebr， text feature+location feat+social embed； 底座是nn； 这里换成bert
+	核心方法: 
+		模型：query和product分别用两层和三层的xlm表示。训练融合了2阶段课程学习、多模态处理（text和image）、多任务学习(分类loss)等，同时优化query-to-product的召回任务和product的分类任务； 使用ml可解释技术来理解模型，找到优化点。
+			query表示： country embed/text encoder的融合attention
+			doc表示： title+描述的text encoder、图片的embed , bag of embed of 3gram 融合attention
+		训练：
+			训练数据： in-batch负样本。 infonce? 只需要挖掘高质量的正样本
+		课程学习：
+			设计课程学习框架， 逐步feed harder样本，auc提升1%
+			hard样本：in-batch内打分最高的负样本，认为是hard负。  刚开始课程学习效果并不好，经过分析发现需要确保第一轮训练收敛；
+		评估：
+			
+		应用：
+			There is no silver bullet for retrieval
+			召回侧，que2search与其他召回方式并行，比如term-based召回、位置召回、social召回等。即只把向量召回作为解决语义匹配的方法。原因：1 性能因素；2 向量召回缺乏硬性fiter；3 term召回的高效性。
+	
+	基线：
+	数据集：
+	效果:
+	消融实验:
+	结论:
 	
 	
 	
