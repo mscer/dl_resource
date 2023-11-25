@@ -2,6 +2,55 @@ Book on Pretrained Transformers for Text Ranking: BERT and Beyond
 综述：两方便的应用：rerank（分类loss）和 学习稠密向量表示
 	
 
+
+Neural Ranking Models with Multiple Document Fields；   multifield+mask+dropout;
+	背景:  nn经常只用在单域上，但是doc天然是多域的； bm25f就结合了多域的文档结构；本文探索nn在多域上的用法； 引入mask机制 处理field缺失；引入dropout方式某个域特征过强。  多域的联合建模好于多个filed结果的均值等。 多域的优势：考虑了文档结构；mask处理特征缺失，和变长； dropout防止局部特征过强。
+	动机:
+		doc的多个域之间包含互补的信息，如title短小精炼；body长，信息丰富等；文章提出nrm-f,学习doc的多域表示。
+		doc的信息：doc自身信息； doc之间信息，anchor text; 用户行为信息；user-doc(clicked query可以表示doc)。 后两个可以叫权威性。
+		一些研究表明：域之间可以提供互补的信息； 但是最新的doc或者低频doc 权威性特征会不足，用户点的少，或者缺少anchor,需要依赖相关性。
+		多域的难点：每个field有自己的特性，body长、query短， click query可能是其他语种； 每个filed内包含多个instance（sections）;
+	核心工作：
+		多域处理结构；field-wise mask； field-wise dropout; 为啥不加个gate？  title/body/url/anchor/clicked query
+		核心问题1：多域是否能提高排序效果；
+		核心问题2：是否能超过bm25f和ltr
+		核心问题3：多域联合建模是否比单域后summing更好
+		核心问题4：分域的query表示是否好于单域query表示；
+		核心问题5： field-wise mask 和 field-dropout的消融实验
+	相关工作：
+		在bm25基础上的bm25F模型；  并且联合多域建模的效果好比单filed然后聚合的方法好。
+		deepmatch:; dssm;c-dssm; 早期交互、后期交互；
+	核心方法:
+		采用后交互的方法：query和doc分别去学习。doc内部field分别去学习，形成层级结构。
+		doc:每个field内部参数共享，field内部instance分别学习。 field进行汇聚，sum/max/mean/concat+mlp;  field之间进行经过mlp 汇聚成doc表示。
+		instance-wise表示：
+		instance-wise(field内部)聚合： 每个field内部固定数量的instance，缺少的补0；concat+ mlp
+		field之间聚合：concat+mlp
+		*field-wise mask: padding代表缺失值，但是模型为认为是0，会进行梯度更新（gate?mask?）。  mask矩阵乘以instance的输出，mask掉instance的梯度。
+		*field-wise dropout: 高区分性特征容易作用过强，导致其他特征作用不符合预期。需要field-wise 的dropout,  随机dropout整个field；
+		*query【query的多域学习】: 结果与instance的表示类似，但是输出维度是 field-wise表示的和，从而实现不同field，有不同的query表示。
+		match层：先计算哈达玛积，然后进行mlp； 没有直接进行内积或者cos，这两个操作会将field退话成float值，会影响field之间的区分性。
+		训练：pairwise训练方式，loss中，用类似ndcg的方式来设置label（有点想lambdamart的trick）。
+	基线：
+		单域效果；
+		bm25/bbm25F
+		人工特征+ltr; lambdamart
+		dssm、c-dssm
+	数据集：
+		bing语料；
+		评估指标：ndcg
+	效果:
+		问题1：多域明显超过单域效果； 单域内部 clicked query效果最好。
+		问题2： 相比bm25/ltr/dssm/cdssm/, 单域和多域的效果都更好； 
+		问题3： 多域直接融合，超过了单域 汇聚或者加权和的方式
+		问题4： query的多个表示效果，比1个表示效果好；
+		问题5： 集合mask和 dropout效果更好，否则弱与LTR
+	消融实验:
+		1 分析学习曲线，判断需要多少训练预料。
+	结论:
+		提出用于doc多域表示的方法，引入field-wise mask处理特征缺失问题，field-wise dropout处理特征过强问题。
+
+
 Ranker
 
 Passage Re-ranking with BERT
