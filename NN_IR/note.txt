@@ -226,6 +226,68 @@ Que2Search: Fast and Accurate Query and Document Understanding for Search at Fac
 	效果:
 	消融实验:
 	结论:
+
+点击模型：
+	通过挖掘点击数据，来计算query的真实需求，计算query-doc的相关性。现实条件往往受bias等因素影响，导致点击数据不能完全可信。
+	PBM:基于位置的模型
+	CM:基于瀑布流的模型，点击跳过首次点击
+
+		
+
+
+IR；  召回和排序两类：
 	
+
+	召回的基线：bm25和 平滑的smt
+	排序的基线：各种ltr
+
+	term weighing部分:
+		基线：tf*idf;textrank; 基于回归的模型
+		NN: DeepTR  deepCT  HDCT
+	
+
+		
+	Global Weighted Self-Attention Network for Web Search
+		方法：把bm25的统计term weighting，结合到dssm中。 多域doc
+		应用：nn召回； 双塔
+	
+	Context-Aware Sentence/Passage Term Importance Estimation For First Stage Retrieval 
+		应用：召回； 计算term-weighting 跟bm25结合 
+		bert+回归layer计算term weighting。但是要拟合的目标需要build；能否直接依赖搜索日志，直接训练，减少label挖掘哪一步？
+	
+	
+	Context-Aware Document Term Weighting for Ad-Hoc Search 
+		应用：召回； 计算term-weighting 跟bm25结合 
+		方法：deepCT扩展到doc粒度，缓解长度限制；引入label的自动生成策略
+
+	vpcg:Learning Query and Document Relevance from a Web-scale Click Graph 
+		应用：排序特征；
+		方法：点击二部图，训练query和doc的表示。 bow表示，学到的是term的权重系数
+
+	dssm
+		应用：nn排序； 双塔
+		数据：点击样本为正样本，未点击样本为负样本，1:4
+	cdssm
+		应用：nn召回； 双塔
+
+	arc1 arc2(李航的)
+		应用：nn排序； interaction-based
+	
+
+	de-bert:dual encoder bert
+		应用：nn排序； 双塔
+	
+	drmm
+		应用：nn排序
+	k-nrm : softmatch
+		方法：计算query与doc的term的相似性， 引入kernel来抽取相似性特征。kennel是常见pooling（mean,max）的泛化。   更好的poolling ,有点意思：除了mean,max之外的可导poolling。 不过kernel参数是否也能做成可导的？
+		应用：nn 排序；  交叉表示
+	Convolutional Neural Networks for Soft-Matching N-Grams in Ad-hoc Search 
+		方法：
+		应用：
+	
+	Sparse, Dense, and Attentional Representations for Text Retrieval 
+		方法：
+		应用：
 	
 	

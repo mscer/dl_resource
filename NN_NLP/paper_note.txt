@@ -220,5 +220,40 @@ Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
 				bleu：基于n-gram的权重，统计贡献频率；
 				rouge：测量两个句子的相似性；
 				meteor：bleu的改进型
+Generalization through Memorization: Nearest Neighbor Language Models
+		场景：提升lm的泛化能力
+		动机：强假设：表示学习问题要比预测问题更简单
+		方法：使用knn召回机制，增强plm。使用召回的top-n训练语料（<sentence，target_word>），来辅助plm的输出;预测时，从top-n对应的target_word中建立下一个此的概率分布Pknn， Pknn和原始plm的P概率做线性插值，得到最终的下一个词的概率分布。
+
+Summary
+	Text Summarization with Pretrained Encoders
+		场景：summary。 提出将bert应用于提取式和生成式summary的方法
+		动机：验证plm在summary上的效果。	相比于word/sentence，summary需要捕捉更长的语义片段（doc-level）。并且对于生成式summary，还需要plm具备生成能力
+		方法：doc-level bert encoder。提取式：encoder-only结构； 生成式：encoder-decoder 结构； encoder和decoder建立分离的optimizer； 提出两阶段的训练法昂是 先提取式train，然后进行生成式train。 doc-level:将多个sentence的cls拼接作为新的sequence，来表示doc。bertsum  bertsumext  bertsum+decoder
+		贡献：1 证明了doc-level的重要性；2 提出了plm应用于summary的方法；3 这种方法可以作为plugin，进一步提升效果
+
+		
+
+
+
+
+Prompt系列
+	Prefix-Tuning: Optimizing Continuous Prompts for Generation 
+		场景：nlg; 自回归、encoder-decoder
+		动机：离散token次优，直接训练科学系的虚拟token，即连续向量
+		方法：引入额外的参数作为 魔板， 固定plm知识，只优化prefix向量。每一层都单独训练prefix
+		应用：gpt、 bart； 每个新的场景， 只训练prefix即可
+	
+	GPT Understands, Too 
+		场景： gpt应用到nlu
+		动机：
+		方法：
+		应用点：
+		
+	Differentiable Prompt Makes Pre-trained Language Models Better Few-shot Learners:
+		场景：小plm的few-shot
+		动机：离散token构成的模板和标签映射是次优的。 用虚拟token代替离散token，同时让模板和标签映射同时可学习。
+		方法： 虚拟token的魔板  虚拟token的label， 以及ft阶段引入mlm；；虚拟token来源于plm自身，不额外引入参数
+		应用：分类相关的任务
 				
 			
