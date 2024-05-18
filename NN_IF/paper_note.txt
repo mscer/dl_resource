@@ -151,6 +151,81 @@ Suervey:
 	CAN: Revisiting Feature Co-Action for Click-Through Rate Prediction;   另外一种形式内积
 		核心方法：另外一种形式的内积，跟我之前的memory_net很相似，即网络参数使用其他变量的embed.
 		对比基线：dien/deefm/ncf/
+
+FinalMLP: An Enhanced Two-Stream MLP Model for CTR Prediction
+	背景:  已知的现象：mlp在学习乘积上效率比较差，因而现在多采用多路的形式提取特征， mlp结合 fm，或者dcn等。 将mlp（隐私交互）与专门负责交互的layer结合起来。本文发现同时学习两个mlp 效果竟然比之前的还要好。基于这个观察，提出了finalMLP模型，融合特征gate和 交互聚合层。
+	动机:
+		之前的模型都是没有尝试双流mlp的方式，本文尝试双流mlp的效果。发现双流mlp效果很好，尝试设计更符合ctr的双流mlp模型
+	核心工作：
+		双流mlp，继承gate和 特征聚合层。
+	相关工作：
+	核心方法:
+	基线：
+		wide&deep
+		deepfm
+		dcn
+		xdeepfm
+		autoint
+		afn
+		deepim
+		masknet:特征 reweighting
+		
+	数据集：
+	效果:
+	消融实验:
+	结论:
+
+Wukong: Towards a Scaling Law for Large-Scale Recommendation
+	背景:  scaling law 在nlp领域上提升了模型质量，但是在推荐领域还没有观察到这种现象。本文提出基于堆叠fm和mlp的模型wukong
+	动机:
+		fb基线：dlrs。
+		现有的模型在小数据机上效果很好，但是在scaling law场景下的效果仍然未知。
+		最直接的scaling law的方式是 扩大embed的大小，但是只扩大embd方式有几个缺点：
+			1 只增加参数量，并没有增加模型的捕获复杂交互的能力。
+			2 硬件不友好；
+		动机：本文想要找到一种适合推荐模型的扩展机制：设计一种统计的架构，他的效果可以随着数据、参数的提升而提升；使用堆叠fm的方式来提升高阶特征交互（二进制快速幂，fm是二阶，多层fm变成高阶）。
+	核心工作：
+		1 新的模型框架
+		2 在实际数据上的效果；
+		3 验证scaling law的消融实验。
+	相关工作：
+		基础框架：dlrs； sparse和dense全部emebd化；
+		embed后的交互：autoint ; deepfm 和dlrs(fm); dcn; masknet (特征reweighting和乘法);
+		现有模型的扩展：经常是embed部分的扩展（sparse feat）; 而embed后 交互上的scaling law讨论很少。 Autoint dcn 在交互层大于2时，机会就没有收益了。	
+		
+	核心方法:
+		wukong的设计原则：1 高阶特征交互；2 确保满足scaling law
+		1 ense embed:
+			sparse和dense 都转成 稠密向量（embed和mlp）;  重要的稀疏特征会产生多个embed(会有效吗？)
+		2 交互层设计：
+			输入分别过fmb和 lcb层；为了训练稳定性，交互block之间增加了resnet和 ln处理。
+			fmb:
+				fm后平铺，过ln, mlp。
+			lcb:
+				mlp (类似一阶部分？)	
+		3 多层堆叠：
+			
+		
+
+	基线：
+		masknet
+		autoint
+		DLRM
+		xDeepFM
+		
+	数据集：
+		1 小数据集上的横向对比
+			基线：afn autoint dlrm finalMLP(*)  masknet xdeepfm
+			指标： auc /loggoss/
+
+		2 随着数据scaling law上的效果
+			数据：内部真实数据145B
+	效果:
+	消融实验:
+		不同成分的影响：fmb和 LCB
+			FMB: 影响最大； LCB和 resnet影响很小。 但是假如同时去掉LCB和 resnet,会有显著下降。
+			
+	结论:
 		
 
 
