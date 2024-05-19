@@ -1,38 +1,68 @@
 
 Finetuned Language Models Are Zero-Shot Learners（FLAN）
-背景: 
-	1. 指令ft后的lm，可以提升他的zero-shot能力（提升理解和输出能力）；指令后的能力甚至高于few-shot
-	2. 指令ft成功的关键：ft数据集的大小，模型的scale，自然语言指令的构造
-动机: 
-	1. Gpt3等模型在few-shot上效果很好，但是zero-shot效果比较差。一个可能的远因是，zero-shot时候的指令可能与训练时的promot相差比较大；
-	2. 动机：采用指令ft来提升模型对指令的理解能力。使用指令作为监督信号来ft任务，提升lm的指令follow能力
-核心工作： 
-	1. 本文探索提升llm zero-shot能力的方法：将nlp任务用指令的方式描述后，在进行ft。提升模型对理解的理解能力，进一步提升zero-shot能力。
-	2. 实验证明：增加指令ft中的任务cluster(?)可以提升在新任务上发能力，并且只在足够大的模型上才能体现出来（涌现？）。
-相关工作： 
-	ft方式：Bert,T5: pretrain+ft
-	prompt方式：GPT: pretrain+prompt
-	ift方式：FLAN:pretrain+ift（指令ft）；结合ft和prompt
-	
-核心方法: 
-	1. 任务和模板：将现有的开源数据集处理成指令的形式；62个数据集，处理成包含12个任务簇的一个大数据集中。每一个数据，人工生成10个不同的模板，为了提升多样性，最多会增加三个模板。
-	2. 分类任务：增加option到任务中，option用来防止可选项。
-	3. 训练细节：
-		底座：lambda-pt
-		指令ft:
-基线： 
-	Gpt
-	Lambda-pt
-数据集： 
-效果: 
-消融实验: 
-	在需要理解指令上的效果zero-shot很好，甚至超过few-shot的；但是在不需要指令上的数据机上收益很小。
-	需要足够大的模型上效果才会好，小模型效果反而变差，猜测原因似乎ft阶段对小模型的参数影响面更大； 而对大模型总体参数量影响较小，同时教会了模型的指令理解能力。100B以上的效果要好一些
-	类似icl，构造few-shot的方式，能来来进一步提升。
-结论:
-	所以核心仍然follow the train data。 所以当下游任务已经和pretrain一致（不需要指令提示）时，ift效果提升很小。
+	背景: 
+		1. 指令ft后的lm，可以提升他的zero-shot能力（提升理解和输出能力）；指令后的能力甚至高于few-shot
+		2. 指令ft成功的关键：ft数据集的大小，模型的scale，自然语言指令的构造
+	动机: 
+		1. Gpt3等模型在few-shot上效果很好，但是zero-shot效果比较差。一个可能的远因是，zero-shot时候的指令可能与训练时的promot相差比较大；
+		2. 动机：采用指令ft来提升模型对指令的理解能力。使用指令作为监督信号来ft任务，提升lm的指令follow能力
+	核心工作： 
+		1. 本文探索提升llm zero-shot能力的方法：将nlp任务用指令的方式描述后，在进行ft。提升模型对理解的理解能力，进一步提升zero-shot能力。
+		2. 实验证明：增加指令ft中的任务cluster(?)可以提升在新任务上发能力，并且只在足够大的模型上才能体现出来（涌现？）。
+	相关工作： 
+		ft方式：Bert,T5: pretrain+ft
+		prompt方式：GPT: pretrain+prompt
+		ift方式：FLAN:pretrain+ift（指令ft）；结合ft和prompt
+		
+	核心方法: 
+		1. 任务和模板：将现有的开源数据集处理成指令的形式；62个数据集，处理成包含12个任务簇的一个大数据集中。每一个数据，人工生成10个不同的模板，为了提升多样性，最多会增加三个模板。
+		2. 分类任务：增加option到任务中，option用来防止可选项。
+		3. 训练细节：
+			底座：lambda-pt
+			指令ft:
+	基线： 
+		Gpt
+		Lambda-pt
+	数据集： 
+	效果: 
+	消融实验: 
+		在需要理解指令上的效果zero-shot很好，甚至超过few-shot的；但是在不需要指令上的数据机上收益很小。
+		需要足够大的模型上效果才会好，小模型效果反而变差，猜测原因似乎ft阶段对小模型的参数影响面更大； 而对大模型总体参数量影响较小，同时教会了模型的指令理解能力。100B以上的效果要好一些
+		类似icl，构造few-shot的方式，能来来进一步提升。
+	结论:
+		所以核心仍然follow the train data。 所以当下游任务已经和pretrain一致（不需要指令提示）时，ift效果提升很小。
 
 
+评估：
+Pythia: A Suite for Analyzing Large Language Models Across Training and Scaling
+	背景: 
+		a. 为了评估train大小和模型大小的对llm的影响，提出了pythia，包含16个llm从70M到12B参数；包含154个ckpt；
+		b. 通过评估来发现新的insight
+	动机: 
+		a. 虽然transformer起的了一些了成功，但是这些模型对how和why而国内然了解的很少。
+		b. 考虑从training和scaling角度来理解。Scaling law只是最底层的理解
+	核心工作： 
+	相关工作： 
+	核心方法: 
+		a. 16个模型训练：
+			i. 训练了两组，每组各8个模型；两组区别是数据是否去重（采用minihash,阈值0.87）
+			ii. 模型结构：基本和gpt一致；除了旋转位置编码/flash attention/
+			iii. 优化器：adam,zero，更大的batchsize,1024,长度2048，每个batch200W个token;每个模型采用300Btoken训练（去重后的数据只有200Btoken,需要训练1.5倍）
+		b. 评估时的发现：
+			i. 预料去重对lm效果并没有很清晰的收益；
+			ii. 相比opt尽管用了不用结构，效果并没有明显不同
+			iii. 多语种上类似，之前的论文结论可能需要重新评测
+	基线： 
+	数据集： 
+	效果: 
+		a. 数据bias对模型的影响
+			i. 7B左右以上的大模型受影响比较小
+		b. 训练顺序的影响
+			i. 训练次序对记忆能力影响很小
+		c. 预训练时term次数对下游task的影响
+			i. 大模型会有这种线性；
+	消融实验: 
+	结论:
 
 
 
@@ -41,29 +71,29 @@ Finetuned Language Models Are Zero-Shot Learners（FLAN）
 
 
 Training language models to follow instructions with human feedback
-背景: 
-	更大的lm并不能使lm更好的满足用户意图，模型与使用者没有对齐。本文通过人介入的ft，来提升对齐能力。Ift+rlhf后，1.3B的gpt效果要好于175的GPT3
-动机:
-	 lm的目标是预测下一个token，这与人类想要的有用无害目标不一致。采用ft和rlhf的方式来提升对齐效果；
-	对齐会存在对齐税问题，在一些任务上效果会下降；
-	rlfh后甚至呈现出指令理解上的泛化，即使训练集没包含的指令，rlfh后也能理解
-	总体而言，使用人类偏好的ft 可以提升大量的任务效果，并且提升安全性和可靠性
-核心工作： 
-	sft数据集：收集数据，
-	reward模型：收集pair偏好数据，训练reward模型：
-	ppo：使用ppo优化policy
-相关工作： 
-核心方法: 
-	底座模型:gpt3
-	Sft：一轮后，sft模型已经在验证机上overfit了，但是继续训练可以提升rm得分和人类偏好，最后训练了16轮；
-	Rm：使用了6B的模型训练rm，175的会不稳定，不稳定的lm不适合作为rl的价值函数使用。训练阶段，每个prompt的pair偏好放在一个batch内（据说因为如果随机分布在数据集中，容易产生多次梯度，带来overfitt，不太理解），
-	ppo
-基线： 
-	sft模型和底座模型
-数据集： 
-效果: 
-消融实验: 
-结论:
+	背景: 
+		更大的lm并不能使lm更好的满足用户意图，模型与使用者没有对齐。本文通过人介入的ft，来提升对齐能力。Ift+rlhf后，1.3B的gpt效果要好于175的GPT3
+	动机:
+		 lm的目标是预测下一个token，这与人类想要的有用无害目标不一致。采用ft和rlhf的方式来提升对齐效果；
+		对齐会存在对齐税问题，在一些任务上效果会下降；
+		rlfh后甚至呈现出指令理解上的泛化，即使训练集没包含的指令，rlfh后也能理解
+		总体而言，使用人类偏好的ft 可以提升大量的任务效果，并且提升安全性和可靠性
+	核心工作： 
+		sft数据集：收集数据，
+		reward模型：收集pair偏好数据，训练reward模型：
+		ppo：使用ppo优化policy
+	相关工作： 
+	核心方法: 
+		底座模型:gpt3
+		Sft：一轮后，sft模型已经在验证机上overfit了，但是继续训练可以提升rm得分和人类偏好，最后训练了16轮；
+		Rm：使用了6B的模型训练rm，175的会不稳定，不稳定的lm不适合作为rl的价值函数使用。训练阶段，每个prompt的pair偏好放在一个batch内（据说因为如果随机分布在数据集中，容易产生多次梯度，带来overfitt，不太理解），
+		ppo
+	基线： 
+		sft模型和底座模型
+	数据集： 
+	效果: 
+	消融实验: 
+	结论:
 
 
 
@@ -356,4 +386,3 @@ other:
 	消融实验:
 		对数据集的依赖
 	结论:
-	

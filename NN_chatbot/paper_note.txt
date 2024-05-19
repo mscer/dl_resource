@@ -1,0 +1,22 @@
+
+
+Towards a Human-like Open-Domain Chatbo
+	背景:
+		a. 多轮开放领域聊天机器人meena,使用最小化perplexity的方式进行训练；
+		b. 提出了人类评估指标ssa;
+		c. 实验证明SSA与perplexity的相关性；
+	动机:  
+		a. 开放领域chatbot很重要，现有的系统太复杂；end2end的方法则存在许多问题；
+		b. 本文提出meena,end2end的生成式chatbot和指标SSA来评估chatbot
+		c. 发现ssa与模型的perplexity高度一致；而最近的评估发现人类评估得分与BLEU关联性不高
+	核心工作： 
+		a. 提出核心指标；
+		b. 证明perplexity与人类评估一致
+		c. End2end训练的低perplexity chatbot比现有的以来复杂设计的chatbot效果要好
+	相关工作： 
+	核心方法: 
+	基线： 
+	数据集： 
+	效果: 
+	消融实验: 
+	结论:
