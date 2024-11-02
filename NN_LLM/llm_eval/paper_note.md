@@ -1,4 +1,59 @@
 
+# title:G-EVAL: NLG Evaluation using GPT-4 with Better Human Alignment
+## 背景: 
+- llm生成text的质量很难自动化评估,传统的指标入bleu,rouge 与人类的评估相关性很低。  
+- 最近的研究表明可以使用LLM作为nlg的评估
+- 本文提出G-eval,使用llm结合cot来评估nlg的质量
+- https://github.com/nlpyang/geval
+- reference-based评估：需要参考进行评估
+- reference-free:不需要参考的评估
+## 动机:
+## 核心工作：
+1. 对于NLG(summary/对话响应)任务，llm based的方法超过之前的baseline
+2. 基于llm的评估对指令和prompt敏感，cot通过提供guide可以提升llm评估的效果；
+3. 通过token的logit做reweighting，llm可以提供细粒度的float得分
+4. llm可能会更偏好llm的输出，如果使用llm 评估作为reward，可能会陷入自我强化。
+## 相关工作：
+最近的研究提出直接使用LLM作为nlg的评估：使用llm针对候选生成进行打分。这种方法的假设是：llm对高质量、流程的输出胡分配更高的权重
+1. gptscore
+## 核心方法:
+g-eval的prompt包含三个部分：
+1. 任务描述，评估准则
+2. cot：通过llm生成的一系列在中间指令，用来描述详细的评估step
+3. score函数，通过调用llm来计算输出端得分。比如基于token 的logit。不同于gpt采用token的概率作为评分函数，g-eval采用form-filling的方法，即模型直接输出得分。但是直接打分有两个问题:
+    1. 大量分数集中在特定值，导致打分方差很小，见啥hole与人类评估的相关性
+    2. 离散的分值，体现不出差异感。
+    3. 本文提出使用分值token的权重乘以具体分值来作为最终的打分。
+    4. 对于无法直接输出logits的，通过采用多次来估计token概率
+方法：
+1. 输入任务描述和评估原则,通过cot生成评估步骤
+2. 合并生成的cot，来评估nlg输出
+## 评估方法
+sperman系数；  
+kendall-tau系数
+## 基线：
+gptscore:使用text生成text的loggit近似为score  
+bertscore:基于bertembed评估两段文本的相似性  
+moverscore:基于bertscore，加入sof对齐和聚合方法，提升打分鲁棒性  
+bastscore:使用bart评估平均的likelihood  
+unieval:使用T5，将任务转换为QA任务。
+## 数据集：
+任务类型：summary和对话响应生成  
+summaryEval:评估summary能力，label包含4个指标上的人类打分  
+topical-chat:对话回复评估  
+qags:summary任务中的幻觉评估
+## 效果:
+1. 传统的rouge、bleu效果很差  
+2. 使用nn学习人类打分的方法，相比传统方法提升很多。
+3. g-eval超过了之前是所有方法,在一些温度上也超过了gptscore
+4. g-eval之前。unieval效果与人类最一致
+## 消融实验:
+1. llm评估更偏爱llm生成的answer
+2. 加入cot后与人类的一致性更高
+3. 概率reweighting的作用：效果不稳定，但是float类型的更友好
+   
+## 结论:
+
 
 
 
@@ -6,6 +61,7 @@
 ## 背景: 
 - 生成任务的评估研究的太少。  
 - 本问题提出gptscore: 采用llm的涌现能力，来评估生成的文本。  
+- https://github.com/jinlanfu/GPTScore
 ## 动机:
 本文结合llm的zero-shot指令，icl能力来初级复杂的评估任务。  
 条件生成概率可以用来评估高质量文本的得分。  
@@ -54,7 +110,6 @@ score 方法
 
 # template
 # title:
-
 ## 背景: 
 ## 动机:
 ## 核心工作：
