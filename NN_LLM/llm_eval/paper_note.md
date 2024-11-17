@@ -1,4 +1,20 @@
 
+# title:Evaluating Open-QA Evaluation
+## 背景: 
+当前llm的自动评估方法仍然有很大限制，
+## 动机:
+## 核心工作：
+## 相关工作：
+## 核心方法:
+## 评估方法
+## 基线：
+## 数据集：
+## 效果:
+## 消融实验:
+## 结论:
+
+
+
 # title:G-EVAL: NLG Evaluation using GPT-4 with Better Human Alignment
 ## 背景: 
 - llm生成text的质量很难自动化评估,传统的指标入bleu,rouge 与人类的评估相关性很低。  
